@@ -18,4 +18,12 @@ public class IndexController {
         return "index";
     }
 
+    /**
+     * 无权限默认跳转页面
+     * @return
+     */
+    @RequestMapping("/403")
+    public String error(){
+        return "403";
+    }
 }
