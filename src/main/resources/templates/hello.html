@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
+    <title>Hello World!</title>
+    <script th:src="@{/js/jquery.min.js}" type="text/javascript"></script>
+</head>
+
+<body>
+
+<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+
+<form th:action="@{/logout}" method="post">
+
+    <input type="submit" value="Sign Out"/>
+</form>
+<form th:action="@{/admin}" method="post">
+    <input th:type="submit" th:value="前往管理员页面"/>
+
+</form>
+<a th:href="@{/admin}">前往管理员用户页面</a>
+<input th:type="submit" onclick="testPost()" th:value="前往管理员页面"/>
+</body>
+<script>
+    $.ajaxSetup({
+        //timeout: 3000,
+        //dataType: 'html',
+        //请求成功后触发
+        //success: function (data) { show.append('success invoke!' + data + '<br/>'); },
+        //请求失败遇到异常触发
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            var errorCode = XMLHttpRequest.status;
+            if(errorCode == 403){
+                alert('您无权限进行此操作，请联系管理员');
+            }else if(errorCode == 404){
+                alert('请求路径错误');
+            }else{
+                alert('服务器异常');
+            }
+//            alert(XMLHttpRequest.status);
+//            alert(XMLHttpRequest.readyState);
+//            alert(textStatus);
+        }
+        //完成请求后触发。即在success或error触发后触发
+       // complete: function (xhr, status) { show.append('complete invoke! status:' + status+'<br/>'); },
+        //发送请求前触发
+//        beforeSend: function (xhr) {
+//            //可以设置自定义标头
+//            xhr.setRequestHeader('Content-Type', 'application/xml;charset=utf-8');
+//            show.append('beforeSend invoke!' +'<br/>');
+//        },
+    })
+    function testPost() {
+        var token = $('meta[name="_csrf"]').attr("content");
+        var header = $('meta[name="_csrf_hader"]').attr("content");
+        $(document).ajaxSend(function(e,xhr,opt){
+            xhr.setRequestHeader(header,token);
+        });
+        $.ajax({
+            url:"/admin",
+            type:'POST',
+
+            success:function (data) {
+
+            }
+        });
+    }
+</script>
+</html>
