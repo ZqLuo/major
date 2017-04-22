@@ -31,6 +31,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+/**
+ * http请求工具类
+ */
 public class HttpUtils {
 	
 	/**

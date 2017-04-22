@@ -20,6 +20,10 @@ public class APIProperties {
      * showapi APPCODE
      */
     public String expressappcode;
+    /**
+     * 数据库类型
+     */
+    public String dataBaseType;
 
     public String getShowapihost() {
         return showapihost;
@@ -35,5 +39,13 @@ public class APIProperties {
 
     public void setExpressappcode(String expressappcode) {
         this.expressappcode = expressappcode;
+    }
+
+    public String getDataBaseType() {
+        return dataBaseType;
+    }
+
+    public void setDataBaseType(String dataBaseType) {
+        this.dataBaseType = dataBaseType;
     }
 }

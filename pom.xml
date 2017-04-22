@@ -72,6 +72,14 @@
 		</dependency>
 		<!--http-->
 
+		<!--tool-->
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.3</version>
+		</dependency>
+		<!--tool-->
+
 		<!--mysql-->
 		<dependency>
 			<groupId>mysql</groupId>

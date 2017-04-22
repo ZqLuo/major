@@ -1,17 +1,18 @@
 package com.example.entity;
 
-import com.example.util.IdEntity;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by zqLuo
  */
 @Entity
 @Table(name = "sys_role")
-public class SysRole extends IdEntity{
+public class SysRole{
+    @Id
+    @GeneratedValue
+    private Integer id;
 
+    @Column(name = "name",length = 32)
     private String name;
 
     public String getName() {
@@ -20,5 +21,13 @@ public class SysRole extends IdEntity{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

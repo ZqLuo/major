@@ -16,8 +16,6 @@ public class ExpressQueryController {
 
     @Autowired
     private ExpressQueryUtil expressQueryUtil;
-    @Autowired
-    private DemoService demoService;
 
     Logger logger = Logger.getLogger(ExpressQueryController.class);
 

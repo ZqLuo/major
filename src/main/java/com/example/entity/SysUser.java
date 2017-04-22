@@ -13,33 +13,33 @@ import java.util.List;
 public class SysUser{
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
-    @Column(length = 32)
-    private String id;
+    @GeneratedValue
+    private Integer id;
 
     /**
      * 用户名即登录名
      */
+    @Column(length = 32)
     private String username;
     /**
      * 真实姓名
      */
-    @Column(name = "true_name")
+    @Column(name = "true_name",length = 32)
     private String trueName;
     /**
      * 邮箱
      */
-    @Column(name="email")
+    @Column(name="email",length = 100)
     private String email;
     /**
      * 手机
      */
-    @Column(name = "tel_name")
-    private String telPhone;
+    @Column(name = "tel_name",length = 11)
+    private Integer telPhone;
     /**
      * 密码
      */
+    @Column(length = 255)
     private String password;
 
     @ManyToMany(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
@@ -69,11 +69,11 @@ public class SysUser{
         this.email = email;
     }
 
-    public String getTelPhone() {
+    public Integer getTelPhone() {
         return telPhone;
     }
 
-    public void setTelPhone(String telPhone) {
+    public void setTelPhone(Integer telPhone) {
         this.telPhone = telPhone;
     }
 
@@ -93,11 +93,11 @@ public class SysUser{
         this.roles = roles;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 }
