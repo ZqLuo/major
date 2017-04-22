@@ -1,6 +1,8 @@
 package com.example.controller;
 
+import com.example.entity.SysCode;
 import com.example.entity.SysMenu;
+import com.example.service.SysCodeService;
 import com.example.service.SysMenuService;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.log4j.Logger;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,6 +23,8 @@ public class IndexController extends BaseController{
     private final Logger logger = Logger.getLogger(IndexController.class);
     @Autowired
     private SysMenuService sysMenuService;
+    @Autowired
+    private SysCodeService sysCodeService;
 //    @PreAuthorize("hasRole('ADMIN')") 权限控制
 //    @RequestMapping(value = "/admin",method = RequestMethod.POST)
 //    public String toAdmin(){

@@ -1,12 +1,16 @@
 package com.example.util;
 
 import com.example.config.APIProperties;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +18,7 @@ import java.util.Map;
  * Created by zqLuo
  */
 @Repository
-public class JdbcUtil {
+public class JdbcUtil<T> {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -58,15 +62,19 @@ public class JdbcUtil {
         return sql;
     }
 
-    public PageForSql queryForPage(String sql,int page,int size,Class clazz,Object...params){
+    public String createCountSql(String sql){
+        return"select count(*) from (" + sql + ") as total";
+    }
+
+    public PageForSql queryForPage(String sql,int page,int size,Class<T> clazz,Object...params){
         PageForSql pageForSql = new PageForSql();
-        String countSql = "slect count(*) from (" + sql + ")";
         pageForSql.setPage(page);
-        pageForSql.setPageSize(page);
-        pageForSql.setTotal(this.queryCount(sql,params));
-        List<Map<String,Object>> result = jdbcTemplate.queryForList(sql,params);
+        pageForSql.setPageSize(size);
+        pageForSql.setTotal(this.queryCount(createCountSql(sql),params));
+        List<Map<String,Object>> result = jdbcTemplate.queryForList(createPageSql(sql,page,size),params);
         try {
-            List objects = CommontUtil.parseJdbcMapToObject(result,clazz);
+            List<T> list = this.parseJdbcMapToObject(result,clazz);
+            pageForSql.setResult(list);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -79,5 +87,47 @@ public class JdbcUtil {
 
     public Integer queryCount(String sql,Object...params){
         return jdbcTemplate.queryForObject(sql,params,Integer.class);
+    }
+
+    public static <T> List<T> parseJdbcMapToObject(List<Map<String,Object>> jdbcMaps,Class<T> tClass) throws InstantiationException, IllegalAccessException, InvocationTargetException{
+        List<T> results = new ArrayList<T>();
+        if(jdbcMaps != null && jdbcMaps.size()>0){
+            for(Map<String,Object> jdbcMap:jdbcMaps){
+                Map<String,Object> map = new HashMap<String, Object>();
+                T t = tClass.newInstance();
+                Field[] fields = t.getClass().getDeclaredFields();
+                for(Field field : fields){
+                    Object value = jdbcMap.get(field.getName().toUpperCase());
+                    if(StringUtil.isNotEmpty(value)){
+                        map.put(field.getName(), value);
+                    }
+                }
+                BeanUtils.populate(t, map);
+                results.add(t);
+            }
+        }
+        return results;
+    }
+
+    /**
+     * 将jdbctemplate查询得到的map转换为对象（map中key需与对象的属性名相同）
+     * 不区分大小写
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     */
+    public static Object parseJdbcMapToObject(Map<String,Object> jdbcMap,Class clazz) throws InstantiationException, IllegalAccessException, InvocationTargetException{
+        Map<String,Object> map = new HashMap<String, Object>();
+        Object o = clazz.newInstance();
+        Field[] fields = clazz.getDeclaredFields();
+        for(Field field : fields){
+            Object value = jdbcMap.get(field.getName().toUpperCase());
+            if(StringUtil.isNotEmpty(value)){
+                map.put(field.getName(), value);
+            }
+        }
+        BeanUtils.populate(o, map);
+        return o;
     }
 }

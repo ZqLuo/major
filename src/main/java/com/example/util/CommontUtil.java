@@ -58,48 +58,6 @@ public class CommontUtil {
 		return bigDecimal.toPlainString();
 	}
 
-	/**
-	 * 将jdbctemplate查询得到的map转换为对象（map中key需与对象的属性名相同）
-	 * 不区分大小写
-	 * @return
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws InvocationTargetException 
-	 */
-	public static Object parseJdbcMapToObject(Map<String,Object> jdbcMap,Class clazz) throws InstantiationException, IllegalAccessException, InvocationTargetException{
-		Map<String,Object> map = new HashMap<String, Object>();
-		Object o = clazz.newInstance();
-		Field[] fields = clazz.getDeclaredFields();
-		for(Field field : fields){
-			Object value = jdbcMap.get(field.getName().toUpperCase());
-			if(StringUtil.isNotEmpty(value)){
-				map.put(field.getName(), value);
-			}
-		}
-		BeanUtils.populate(o, map);
-		return o;
-	}
-
-	public static List<Object> parseJdbcMapToObject(List<Map<String,Object>> jdbcMaps,Class clazz) throws InstantiationException, IllegalAccessException, InvocationTargetException{
-		List<Object> results = new ArrayList<Object>();
-		if(jdbcMaps != null && jdbcMaps.size()>0){
-			for(Map<String,Object> jdbcMap:jdbcMaps){
-				Map<String,Object> map = new HashMap<String, Object>();
-				Object o = clazz.newInstance();
-				Field[] fields = clazz.getDeclaredFields();
-				for(Field field : fields){
-					Object value = jdbcMap.get(field.getName().toUpperCase());
-					if(StringUtil.isNotEmpty(value)){
-						map.put(field.getName(), value);
-					}
-				}
-				BeanUtils.populate(o, map);
-				results.add(0);
-			}
-		}
-		return results;
-	}
-
 	public static String dateToStr(Date date,String pattern){
 		if(date == null){
 			return "";

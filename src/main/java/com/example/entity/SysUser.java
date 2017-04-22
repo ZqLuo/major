@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * 系统用户
  * Created by zqLuo
  */
 @Entity

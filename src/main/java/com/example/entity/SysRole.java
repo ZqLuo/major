@@ -3,6 +3,7 @@ package com.example.entity;
 import javax.persistence.*;
 
 /**
+ * 系统角色
  * Created by zqLuo
  */
 @Entity
