@@ -1,7 +1,6 @@
 package com.example.util;
 
 import com.example.config.APIProperties;
-import com.sun.java.swing.ui.CommonUI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

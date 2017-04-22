@@ -1,51 +1,42 @@
 package com.example.controller;
 
-import com.example.entity.SysUser;
-import com.example.service.SysUserService;
-import com.example.util.MD5Util;
+import com.example.entity.SysMenu;
+import com.example.service.SysMenuService;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Set;
 
 /**
  * Created by zqLuo
  */
 @Controller
-public class IndexController {
+public class IndexController extends BaseController{
 
     private final Logger logger = Logger.getLogger(IndexController.class);
-
-    @RequestMapping("/home")
-    public String home() {
-        return "home";
-
-    }
-
-
+    @Autowired
+    private SysMenuService sysMenuService;
 //    @PreAuthorize("hasRole('ADMIN')") 权限控制
-    @RequestMapping(value = "/admin",method = RequestMethod.POST)
-    public String toAdmin(){
-        return "helloAdmin";
+//    @RequestMapping(value = "/admin",method = RequestMethod.POST)
+//    public String toAdmin(){
+//        return "helloAdmin";
+//    }
+
+    @RequestMapping("/")
+    public String root(Model model, HttpServletRequest request) {
+        //获取当前登录用户菜单
+        Set<SysMenu> sysMenus = findLoginUser().getMenus();
+        model.addAttribute("sysMenus",sysMenus);
+        return "index";
     }
 
-    @RequestMapping("/hello")
-    public String hello() {
-
-        return "hello";
-
-    }
     @RequestMapping("/login")
     public String login(){
         return "login";
-    }
-
-    @RequestMapping("/")
-    public String root() {
-        return "index";
-
     }
 
     @RequestMapping("/403")
