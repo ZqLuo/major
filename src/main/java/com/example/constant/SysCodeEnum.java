@@ -5,9 +5,18 @@ package com.example.constant;
  * Created by zqLuo
  */
 public enum SysCodeEnum {
-
+    /**
+     * 商品类型
+     */
     PRODUCT_TYPE("productType","商品类型"),
-    MEASUREMENT_UNIT("measurementUnit","计量单位")
+    /**
+     * 计量单位
+     */
+    MEASUREMENT_UNIT("measurementUnit","计量单位"),
+    /**
+     * 菜单类型
+     */
+    MENU_TYPE("menuType","菜单类型")
     ;
 
 

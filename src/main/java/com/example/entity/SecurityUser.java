@@ -30,7 +30,6 @@ public class SecurityUser extends SysUser implements UserDetails {
 
 
             this.setRoles(suser.getRoles());
-            this.setMenus(suser.getMenus());
         }
 
     }

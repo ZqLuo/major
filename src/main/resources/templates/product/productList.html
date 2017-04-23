@@ -1,9 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
 <head>
-    <title>商品管理</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
+    <title>斤斤屋谜</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+    <script th:src="@{/jquery/jquery-3.0.0.min.js}" ></script>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/system.js}"></script>
+    <script th:src="@{/jquery/jquery.twbsPagination.min.js}"></script>
 </head>
+<script>
+    var initParam = {
+        "tableid" : "showListTable", //表格字段
+        "url" : "/productController/productList",
+        "optstr" : "数据操作字段",
+        "searchid" : "searchDiv",
+        "pageidc" : "pagination-c",
+        "pageidp" : "pagination-p"
+    }
+    $(function(){
+        initMenu("indexNav","productMenu");
+        initList(initParam);
+    });
+    function search(){
+        initList(initParam);
+    }
+</script>
 <body>
-商品管理
+<nav id="indexNav" class="navbar navbar-default" role="navigation" style="height: 50%;"></nav>
+<div class="container" id="indexContainer">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row" id="searchDiv">
+                <div class="col-md-3 col-sm-3 form-inline">
+                    <label>商品类型:</label>
+                    <select id="productType" class="form-control" >
+                        <option value="">全部</option>
+                        <option th:each="productType:${productTypes}" th:value="${productType.code}" th:text="${productType.name}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-3 col-sm-3 form-inline">
+                    <label>日期:</label>
+                    <select class="form-control" id="purchaseDate">
+                        <option th:each="productType:${productTypes}" th:value="${productType.code}" th:text="${productType.name}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-sm-2 form-inline">
+                    <button type="button" onclick="search();" class="btn btn-primary">查询</button>
+                    <button type="button" class="btn btn-success">新增</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="table-responsive">
+            <table id="showListTable" class="table table-hover">
+                <caption>商品列表 </caption>
+                <thead>
+                <tr>
+                    <th field="id" style="display: none">编号</th>
+                    <th field="productNo">商品编号</th>
+                    <th field="productTypeName">商品类型</th>
+                    <th field="quantity">数量</th>
+                    <th field="measurementUnitName">单位</th>
+                    <th field="price">价格</th>
+                    <th field="purchaseDate" datatype="date">进货日期</th>
+                    <th field="operttion">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <!--<tr>-->
+                        <!--<td>1</td>-->
+                        <!--<td>1</td>-->
+                        <!--<td>1</td>-->
+                        <!--<td>1</td>-->
+                        <!--<td>1</td>-->
+                        <!--<td>1</td>-->
+                        <!--<td>1</td>-->
+                        <!--<td>-->
+                            <!--<span onclick="addCustomer(${customerPage.id});"-->
+                                  <!--style="cursor: pointer;" class="label label-success">修改</span>-->
+										<!--<span onclick="deleteCustomer('${customerPage.id}');"-->
+                                              <!--style="cursor: pointer;" class="label label-danger">删除</span>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                </tbody>
+            </table>
+        </div>
+        <div id="pagination-p" class="col-md-12 col-sm-12">
+            <ul id="pagination-c" class="pagination-md"></ul>
+        </div>
+    </div>
+
+</div>
+<form th:action="@{/logout}" method="post" id="logoutform" style="display: none;">
+    <input type="submit" value="登出"/>
+</form>
+
 </body>
 </html>

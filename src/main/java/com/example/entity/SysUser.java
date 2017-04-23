@@ -46,8 +46,6 @@ public class SysUser{
 
     @ManyToMany(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
     private List<SysRole> roles;
-    @ManyToMany(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
-    private Set<SysMenu> menus;
 
     public String getUsername() {
         return username;
@@ -105,11 +103,4 @@ public class SysUser{
         this.id = id;
     }
 
-    public Set<SysMenu> getMenus() {
-        return menus;
-    }
-
-    public void setMenus(Set<SysMenu> menus) {
-        this.menus = menus;
-    }
 }

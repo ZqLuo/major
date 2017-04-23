@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.entity.SysMenu;
+import com.example.entity.SysUser;
 
 import java.util.List;
 
@@ -13,4 +14,11 @@ public interface SysMenuService {
      * @return
      */
     List<SysMenu> getEnableSysMenus();
+
+    /**
+     * 根据登录用户获取菜单
+     * @param sysUser
+     * @return
+     */
+    List<SysMenu> getMenusByUser(SysUser sysUser);
 }

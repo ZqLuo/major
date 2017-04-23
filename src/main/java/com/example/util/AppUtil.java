@@ -1,9 +1,15 @@
 package com.example.util;
 
+import com.example.entity.SysUser;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 获取上下文环境
@@ -38,5 +44,17 @@ public class AppUtil implements ApplicationContextAware {
     @SuppressWarnings("unchecked")
     public static <T> T getBean(Class clazz) throws BeansException {
         return (T) applicationContext.getBean(clazz);
+    }
+
+    /**
+     * 获取登录用户
+     * @return
+     */
+    public static SysUser getLoninUser(){
+        ServletRequestAttributes rs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest  request = rs.getRequest();
+        SecurityContextImpl securityContextImpl = (SecurityContextImpl)request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+        SysUser sysUser =  (SysUser)securityContextImpl.getAuthentication().getPrincipal();
+        return sysUser;
     }
 }

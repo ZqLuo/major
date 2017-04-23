@@ -34,8 +34,8 @@ public class IndexController extends BaseController{
     @RequestMapping("/")
     public String root(Model model, HttpServletRequest request) {
         //获取当前登录用户菜单
-        Set<SysMenu> sysMenus = findLoginUser().getMenus();
-        model.addAttribute("sysMenus",sysMenus);
+//        Set<SysMenu> sysMenus = findLoginUser().getMenus();
+//        model.addAttribute("sysMenus",sysMenus);
         return "index";
     }
 
@@ -47,5 +47,14 @@ public class IndexController extends BaseController{
     @RequestMapping("/403")
     public String error(){
         return "403";
+    }
+
+    /**
+     * 首页内容
+     * @return
+     */
+    @RequestMapping("/main")
+    public String main(){
+        return "main";
     }
 }

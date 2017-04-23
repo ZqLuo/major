@@ -66,8 +66,8 @@ public class JdbcUtil<T> {
         return"select count(*) from (" + sql + ") as total";
     }
 
-    public PageForSql queryForPage(String sql,int page,int size,Class<T> clazz,Object...params){
-        PageForSql pageForSql = new PageForSql();
+    public PageReturn queryForPage(String sql, int page, int size, Class<T> clazz, Object...params){
+        PageReturn pageForSql = new PageReturn();
         pageForSql.setPage(page);
         pageForSql.setPageSize(size);
         pageForSql.setTotal(this.queryCount(createCountSql(sql),params));

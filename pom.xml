@@ -79,6 +79,13 @@
 			<version>1.9.3</version>
 		</dependency>
 		<!--tool-->
+		<!--自定义标签库-->
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.2</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!--mysql-->
 		<dependency>

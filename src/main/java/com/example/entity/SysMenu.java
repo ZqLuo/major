@@ -35,7 +35,7 @@ public class SysMenu {
     @Column(name = "is_enable")
     private boolean isEnable;
     /**
-     * 菜单登记
+     * 菜单等级
      */
     @Column(name = "level")
     private Integer level;
@@ -44,6 +44,8 @@ public class SysMenu {
      */
     @Transient //非数据库字段
     List<SysMenu> childMenu;
+    @Column(name = "menu_type",length = 32)
+    private String menuType;
 
     public Integer getId() {
         return id;
@@ -99,5 +101,13 @@ public class SysMenu {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public String getMenuType() {
+        return menuType;
+    }
+
+    public void setMenuType(String menuType) {
+        this.menuType = menuType;
     }
 }

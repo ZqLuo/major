@@ -1,121 +1,48 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:jjwm="/tld/jjwm.tld"  >
 
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <title>斤斤屋谜</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
     <link rel="stylesheet" th:href="@{bootstrap/css/bootstrap.min.css}"/>
     <script th:src="@{jquery/jquery-3.0.0.min.js}" ></script>
     <script th:src="@{bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/system.js}"></script>
+    <script th:src="@{jquery/jquery.twbsPagination.min.js}"></script>
 </head>
 <script>
     $(function(){
         //屏幕可显示高度 - 导航栏高度 - 页脚高度
         var showHeight = $(window).height() - $("#indexNav").height() - $("#indexFooter").height() - 20;
-        $("#indexContainer").height(showHeight);
+        //$("#indexContainer").height(showHeight);
+        $('#pagination-demo').twbsPagination({
+            totalPages: 35,
+            visiblePages: 5,
+            first:'&lt;&lt;',
+            prev:'&lt;',
+            next:'&gt;',
+            last:'&gt;&gt;',
+            onPageClick: function (event, page) {
+                $('#page-content').text('Page ' + page);
+            }
+        });
+        initMenu("indexNav","");
+        //alert($("#indexNav").html())
     });
-    function logoutform(){
-        $("#logoutform").submit()
-    }
 </script>
 <body>
 
 <nav id="indexNav" class="navbar navbar-default" role="navigation" style="height: 50%;">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse"
-                    data-target="#example-navbar-collapse">
-                <span class="sr-only">切换导航</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">斤斤屋谜</a>
-        </div>
-        <div class="collapse navbar-collapse" id="example-navbar-collapse">
-            <ul class="nav navbar-nav">
-                <!--<li class="active"><a href="#">iOS</a></li>-->
 
-                <li th:each="sysMenu:${sysMenus}">
-                    <a th:href="${sysMenu.menuUrl}">
-                        <span th:text="${sysMenu.menuName}"></span>
-                    </a>
-                </li>
-                <!--<li class="dropdown">-->
-                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">-->
-                        <!--Java <b class="caret"></b>-->
-                    <!--</a>-->
-                    <!--<ul class="dropdown-menu">-->
-                        <!--<li><a href="#">jmeter</a></li>-->
-                        <!--<li><a href="#">EJB</a></li>-->
-                        <!--<li><a href="#">Jasper Report</a></li>-->
-                        <!--<li class="divider"></li>-->
-                        <!--<li><a href="#">分离的链接</a></li>-->
-                        <!--<li class="divider"></li>-->
-                        <!--<li><a href="#">另一个分离的链接</a></li>-->
-                    <!--</ul>-->
-                <!--</li>-->
-                <li><a href="#" data-toggle="modal" data-target="#logoutModel">退出登录</a></li>
-            </ul>
-        </div>
-    </div>
 </nav>
-<div class="container" id="indexContainer">
-    <div class="row">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-3 col-sm-3">日期：</div>
-                    <div class="col-md-3 col-sm-3">类型：</div>
-                    <div class="col-md-3 col-sm-3"></div>
-                    <div class="col-md-3 col-sm-3"></div>
-                </div>
-                <div class="row" style="margin-top: 5px;">
-                    <div class="col-md-3 col-sm-3"></div>
-                    <div class="col-md-3 col-sm-3"></div>
-                    <div class="col-md-3 col-sm-3"></div>
-                    <div class="col-md-3 col-sm-3">
-                        <button type="button" class="btn btn-success">查询</button>
-                        <!--<button type="button" class="btn btn-default">重置</button>-->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            1
-        </div>
-        <div class="col-md-6">2</div>
-
-    </div>
-</div>
+首页
 <form th:action="@{/logout}" method="post" id="logoutform" style="display: none;">
     <input type="submit" value="登出"/>
 </form>
-<!--退出确认模态框-->
-<div class="modal fade" id="logoutModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    &times;
-                </button>
-                <h4 class="modal-title" id="myModalLabel">
-                   是否注销登录？
-                </h4>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消
-                </button>
-                <button type="button" class="btn btn-primary" onclick="logoutform();">
-                    确认
-                </button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal -->
-</div>
 </body>
 </html>

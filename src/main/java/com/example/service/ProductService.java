@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.util.PageForSql;
+import com.example.util.PageReturn;
 import com.example.vo.ProductQueryVo;
 
 /**
@@ -16,5 +16,5 @@ public interface ProductService {
      * @param size
      * @return
      */
-    PageForSql getProductList(ProductQueryVo productQuerty,int page,int size);
+    PageReturn getProductList(ProductQueryVo productQuerty, int page, int size);
 }

@@ -1,12 +1,14 @@
 package com.example.util;
 
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 /**
  * sql查询分页结果
  * Created by zqLuo
  */
-public class PageForSql {
+public class PageReturn {
     /**
      * 当前页
      */
