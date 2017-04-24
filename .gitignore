@@ -3,3 +3,4 @@ demo.iml
 target/
 .DS_Store
 LOG_PATH_IS_UNDEFINED/
+logs/
