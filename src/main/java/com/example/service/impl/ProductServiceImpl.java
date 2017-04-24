@@ -3,6 +3,7 @@ package com.example.service.impl;
 import com.example.dao.ProductRepository;
 import com.example.entity.Product;
 import com.example.service.ProductService;
+import com.example.util.DateUtils;
 import com.example.util.JdbcUtil;
 import com.example.util.PageReturn;
 import com.example.util.StringUtil;
@@ -47,6 +48,14 @@ public class ProductServiceImpl implements ProductService {
             if(StringUtil.isNotEmpty(productQuerty.getProductType())){
                 sql.append(" and product_type = ? ");
                 params.add(productQuerty.getProductType());
+            }
+            if(StringUtil.isNotEmpty(productQuerty.getPurchaseDateBegin())){
+                sql.append(" and purchase_date >= str_to_date(?,'%Y-%m-%d %H:%i:%s')");
+                params.add(productQuerty.getPurchaseDateBegin()+" 00:00:00");
+            }
+            if(StringUtil.isNotEmpty(productQuerty.getPurchaseDateEnd())){
+                sql.append(" and purchase_date <= str_to_date(?,'%Y-%m-%d %H:%i:%s')");
+                params.add(productQuerty.getPurchaseDateEnd()+" 23:59:59");
             }
         }
         return jdbcUtil.queryForPage(sql.toString(),page,size, Product.class,params.toArray());

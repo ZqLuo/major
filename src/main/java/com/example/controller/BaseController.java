@@ -24,9 +24,9 @@ public class BaseController {
     private SysCodeService sysCodeService;
 
     public SysUser findLoginUser(){
-//        SecurityContextImpl securityContextImpl = (SecurityContextImpl)request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-//        SysUser sysUser =  (SysUser)securityContextImpl.getAuthentication().getPrincipal();
-        SysUser sysUser = (SysUser)request.getSession().getAttribute(SysConstant.LOGIN_USER);
+        SecurityContextImpl securityContextImpl = (SecurityContextImpl)request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+        SysUser sysUser =  (SysUser)securityContextImpl.getAuthentication().getPrincipal();
+//        SysUser sysUser = (SysUser)request.getSession().getAttribute(SysConstant.LOGIN_USER);
         return sysUser;
     }
 

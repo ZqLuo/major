@@ -28,6 +28,7 @@ public class SecurityUser extends SysUser implements UserDetails {
 
             this.setPassword(suser.getPassword());
 
+            this.setTrueName(suser.getTrueName());
 
             this.setRoles(suser.getRoles());
         }

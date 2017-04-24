@@ -9,10 +9,14 @@
     <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
     <title>斤斤屋谜</title>
     <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap-datetimepicker.min.css}"/>
     <script th:src="@{/jquery/jquery-3.0.0.min.js}" ></script>
     <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
-    <script th:src="@{/js/system.js}"></script>
     <script th:src="@{/jquery/jquery.twbsPagination.min.js}"></script>
+    <script th:src="@{/js/tooltips/iziToast.min.js}" type="text/javascript"></script>
+    <link rel="stylesheet" th:href="@{/css/tooltips/iziToast.css}"/>
+    <script th:src="@{/bootstrap/js/bootstrap-datetimepicker.min.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap-datetimepicker.zh-CN.js}"></script>
 </head>
 <script>
     var initParam = {
@@ -26,6 +30,16 @@
     $(function(){
         initMenu("indexNav","productMenu");
         initList(initParam);
+        $('.form_date').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0
+        });
     });
     function search(){
         initList(initParam);
@@ -37,7 +51,7 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="row" id="searchDiv">
-                <div class="col-md-3 col-sm-3 form-inline">
+                <div class="col-md-2 col-sm-2 form-inline">
                     <label>商品类型:</label>
                     <select id="productType" class="form-control" >
                         <option value="">全部</option>
@@ -45,12 +59,31 @@
                         </option>
                     </select>
                 </div>
-                <div class="col-md-3 col-sm-3 form-inline">
-                    <label>日期:</label>
-                    <select class="form-control" id="purchaseDate">
-                        <option th:each="productType:${productTypes}" th:value="${productType.code}" th:text="${productType.name}">
-                        </option>
-                    </select>
+                <div class="col-md-6 col-sm-6 form-inline">
+                    <form action="" class="form-horizontal"  role="form">
+                        <fieldset>
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label for="purchaseDateBegin">日期：</label>
+                                    <div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="purchaseDateBegin" data-link-format="yyyy-mm-dd">
+                                        <input class="form-control" size="16" type="text" value="" readonly="readonly"/>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                    </div>
+                                    <input type="hidden" id="purchaseDateBegin" value="" /><br/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="purchaseDateEnd"> --- </label>
+                                    <div style="margin-left: 10px;" class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="purchaseDateEnd" data-link-format="yyyy-mm-dd">
+                                        <input class="form-control" size="16" type="text" value="" readonly="readonly"/>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                    </div>
+                                    <input type="hidden" id="purchaseDateEnd" value="" /><br/>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
                 <div class="col-md-2 col-sm-2 form-inline">
                     <button type="button" onclick="search();" class="btn btn-primary">查询</button>
@@ -94,7 +127,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="pagination-p" class="col-md-12 col-sm-12">
+        <div id="pagination-p" class="col-md-12 col-sm-12" style="margin-top: -35px;">
             <ul id="pagination-c" class="pagination-md"></ul>
         </div>
     </div>
@@ -104,5 +137,10 @@
     <input type="submit" value="登出"/>
 </form>
 
+<a style="display: none;" href="#" class="trigger-success">Success</a>
+<a style="display: none;" href="#" class="trigger-error">Error</a>
+<script th:src="@{/js/tooltips/iziToast.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/tooltips/tooltips.js}" type="text/javascript"></script>
+<script th:src="@{/js/util.js}"></script>
 </body>
 </html>

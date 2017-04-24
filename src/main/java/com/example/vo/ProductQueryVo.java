@@ -28,7 +28,11 @@ public class ProductQueryVo{
     /**
      * 进货日期
      */
-    private String purchaseDate;
+    private String purchaseDateBegin;
+    /**
+     * 进货日期
+     */
+    private String purchaseDateEnd;
     /**
      * 数量
      */
@@ -74,12 +78,20 @@ public class ProductQueryVo{
         this.measurementUnit = measurementUnit;
     }
 
-    public String getPurchaseDate() {
-        return purchaseDate;
+    public String getPurchaseDateBegin() {
+        return purchaseDateBegin;
     }
 
-    public void setPurchaseDate(String purchaseDate) {
-        this.purchaseDate = purchaseDate;
+    public void setPurchaseDateBegin(String purchaseDateBegin) {
+        this.purchaseDateBegin = purchaseDateBegin;
+    }
+
+    public String getPurchaseDateEnd() {
+        return purchaseDateEnd;
+    }
+
+    public void setPurchaseDateEnd(String purchaseDateEnd) {
+        this.purchaseDateEnd = purchaseDateEnd;
     }
 
     public Double getQuantity() {
