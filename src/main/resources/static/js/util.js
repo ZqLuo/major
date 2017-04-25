@@ -3,6 +3,25 @@ var header = $('meta[name="_csrf_hader"]').attr("content");
 $(document).ajaxSend(function(e,xhr,opt){
     xhr.setRequestHeader(header,token);
 });
+
+iziToast.settings({
+    timeout: 1000,
+    // position: 'center',
+    // imageWidth: 50,
+    pauseOnHover: false,
+    // resetOnHover: true,
+    close: true,
+    progressBar: true,
+    // layout: 1,
+    // balloon: true,
+    // target: '.target',
+    // icon: 'material-icons',
+    // iconText: 'face',
+    // animateInside: false,
+    // transitionIn: 'flipInX',
+    // transitionOut: 'flipOutX',
+});
+
 var pageClick = false;
 function initMenu(menuDivId,menuType){
     var params = {"menuType" : menuType};
@@ -103,14 +122,15 @@ function initList(initParam){
             if(result.length > 0){
                 loadListData(result,initParam.tableid);
                 initPage(initParam,data.totalPage + 1);
-                $(".trigger-success").trigger("click");
+                //$(".trigger-success").trigger("click");
+                showSuccessMsg('数据加载成功...');
             }else{
                 //数据为空清空显示区域
                 $("#"+initParam.tableid + " tbody").html("");
                 //数据为空隐藏分页插件
                 $('#' + initParam.pageidc).remove();
                 $("#" + initParam.pageidp).append("<ul id=\""+initParam.pageidc+"\" class=\"pagination-md\"></ul>");
-                $(".trigger-error").trigger("click");
+                showErrorMsg('未查询到数据');
             }
         }
     });
@@ -189,14 +209,14 @@ function reloadTable(initParam,page){
             var result = data.result;
             if(result.length > 0){
                 loadListData(result,initParam.tableid);
-                $(".trigger-success").trigger("click");
+                showSuccessMsg('数据加载成功...');
             }else{
                 //数据为空清空显示区域
                 $("#"+initParam.tableid + " tbody").html("");
                 //数据为空隐藏分页插件
                 $('#' + initParam.pageidc).remove();
                 $("#" + initParam.pageidp).append("<ul id=\""+initParam.pageidc+"\" class=\"pagination-md\"></ul>");
-                $(".trigger-error").trigger("click");
+                showErrorMsg('未查询到数据');
             }
         }
     });
@@ -237,4 +257,29 @@ function formatDate(fd,formatStr)
     str=str.replace(/s|S/g,fd.getSeconds());
 
     return str;
+}
+
+function showSuccessMsg(msg){
+    iziToast.success({
+        title: 'OK',
+        position: 'topCenter',
+        //transitionIn: 'bounceInLeft'
+        // iconText: 'star',
+        //onOpen: function(){
+        //    console.log('callback abriu! success');
+        //},
+        //onClose: function(){
+        //    console.log("callback fechou! success");
+        //}
+        message: msg
+    });
+}
+
+function showErrorMsg(msg){
+    iziToast.error({
+        title: 'Error',
+        message: msg,
+        position: 'topCenter',
+        transitionIn: 'fadeInDown'
+    });
 }
