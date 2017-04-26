@@ -57,6 +57,10 @@ public class ProductServiceImpl implements ProductService {
                 sql.append(" and purchase_date <= str_to_date(?,'%Y-%m-%d %H:%i:%s')");
                 params.add(productQuerty.getPurchaseDateEnd()+" 23:59:59");
             }
+            if(StringUtil.isNotEmpty(productQuerty.getProductNo())){
+                sql.append(" and product_no = ? ");
+                params.add(productQuerty.getProductNo());
+            }
         }
         return jdbcUtil.queryForPage(sql.toString(),page,size, Product.class,params.toArray());
     }
