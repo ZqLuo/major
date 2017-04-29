@@ -39,6 +39,8 @@ public class Product {
      */
     @Column(name = "purchase_date")
     private Date purchaseDate;
+    @Transient
+    private String purchaseDateStr;
     /**
      * 数量
      */
@@ -133,5 +135,13 @@ public class Product {
 
     public void setMeasurementUnitName(String measurementUnitName) {
         this.measurementUnitName = measurementUnitName;
+    }
+
+    public String getPurchaseDateStr() {
+        return purchaseDateStr;
+    }
+
+    public void setPurchaseDateStr(String purchaseDateStr) {
+        this.purchaseDateStr = purchaseDateStr;
     }
 }

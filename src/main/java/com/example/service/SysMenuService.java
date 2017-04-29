@@ -21,4 +21,17 @@ public interface SysMenuService {
      * @return
      */
     List<SysMenu> getMenusByUser(SysUser sysUser);
+
+    /**
+     * 根据菜单类型获取菜单
+     * @param menyType
+     * @return
+     */
+    SysMenu getSysMenuByType(String menyType);
+
+    /**
+     * 清除用户的菜单缓存
+     * @param sysUser
+     */
+    void remvoeCacheByUser(SysUser sysUser);
 }

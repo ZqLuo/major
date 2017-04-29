@@ -10,14 +10,17 @@ import com.example.util.StringUtil;
 import com.example.vo.ProductQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by zqLuo
  */
 @Service
+@Transactional(readOnly = true)
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -62,6 +65,30 @@ public class ProductServiceImpl implements ProductService {
                 params.add(productQuerty.getProductNo());
             }
         }
+        sql.append(" order by purchase_date desc ");
         return jdbcUtil.queryForPage(sql.toString(),page,size, Product.class,params.toArray());
+    }
+
+    @Override
+    public Product getProductById(Integer id) {
+        return productRepository.findOne(id);
+    }
+
+    @Override
+    @Transactional(readOnly = false,rollbackFor = Exception.class)
+    public void createOrUpdateProduct(Product product) {
+        if(StringUtil.isNotEmpty(product.getPurchaseDateStr())){
+            product.setPurchaseDate(DateUtils.parse(product.getPurchaseDateStr(),"yyyy-MM-dd"));
+        }else {
+            product.setPurchaseDate(new Date());
+        }
+        productRepository.save(product);
+//        product = new Product();
+//        product.getId();
+    }
+
+    @Override
+    public Product getProductByNoAndProductType(String productNo, String productType) {
+        return productRepository.getProductByNoAndProductType(productNo,productType);
     }
 }

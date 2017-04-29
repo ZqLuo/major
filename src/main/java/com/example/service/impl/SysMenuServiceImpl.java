@@ -5,6 +5,7 @@ import com.example.entity.SysMenu;
 import com.example.entity.SysUser;
 import com.example.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +30,17 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Cacheable(value = "sysMenu",key = "#sysUser.id") //将用户的菜单存入缓存
     public List<SysMenu> getMenusByUser(SysUser sysUser) {
         return sysMenuRepository.getMenusByUser(sysUser.getId());
+    }
+
+    @Override
+    @Cacheable(value = "sysMenuOne",key = "#menyType")
+    public SysMenu getSysMenuByType(String menyType) {
+        return sysMenuRepository.getSysMenuByType(menyType);
+    }
+
+    @Override
+    @CacheEvict(value = "sysMenu",key = "#sysUser.id")
+    public void remvoeCacheByUser(SysUser sysUser) {
+
     }
 }

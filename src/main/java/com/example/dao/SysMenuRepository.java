@@ -27,4 +27,12 @@ public interface SysMenuRepository extends JpaRepository<SysMenu,Integer>,JpaSpe
      */
     @Query("select o from SysMenu o where o.id in (select t.menuId from SysUserMenu t where t.userId = ?1)")
     List<SysMenu> getMenusByUser(Integer userId);
+
+    /**
+     * 根据菜单类型获取菜单
+     * @param menyType
+     * @return
+     */
+    @Query("select o from SysMenu o where o.menuType = ?1")
+    SysMenu getSysMenuByType(String menyType);
 }

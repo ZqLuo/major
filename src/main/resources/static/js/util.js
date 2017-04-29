@@ -283,3 +283,34 @@ function showErrorMsg(msg){
         transitionIn: 'fadeInDown'
     });
 }
+//表单非空校验
+function validIsEmpty(formId){
+    var hasEmpty = true;
+    $.each($('#' + formId + ' input,select'), function(i, v){
+        if(v.id != ''){
+            var type = $("#" + v.id).attr("type");
+            if(type != "hidden"){
+                //不校验隐藏域
+                var allowEmpty = $("#" + v.id).attr("allowEmpty");
+                if(allowEmpty != "true"){
+                    //不验证允许为空字段
+                    var value = v.value;
+                    if(value == '') {
+                        $("#"+v.id).parent().parent("div").addClass("has-error");
+                        $("#"+v.id).parent().parent("div").removeClass("has-success");
+                        if(hasEmpty){
+                            //alert(v.id);
+                            hasEmpty = false;
+                        }
+                    }else{
+                        $("#"+v.id).parent().parent("div").addClass("has-success");
+                        $("#"+v.id).parent().parent("div").removeClass("has-error");
+                    }
+                }else{
+                    $("#"+v.id).parent().parent("div").addClass("has-success");
+                }
+            }
+        }
+    });
+    return hasEmpty;
+}
