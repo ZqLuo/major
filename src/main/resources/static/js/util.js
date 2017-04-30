@@ -5,7 +5,7 @@ $(document).ajaxSend(function(e,xhr,opt){
 });
 
 iziToast.settings({
-    timeout: 1000,
+    timeout: 2000,
     // position: 'center',
     // imageWidth: 50,
     pauseOnHover: false,
@@ -110,17 +110,17 @@ function getSearchParam(eid){
 }
 
 function initList(initParam){
-    var params = getSearchParam(initParam.searchid);
+    //var params = getSearchParam(initParam.searchid);
     $.ajax({
         url:initParam.url,
         type:'POST',
-        data : params,
+        data : {},
         async : false,
         success:function (data) {
             pageClick = false;
             var result = data.result;
             if(result.length > 0){
-                loadListData(result,initParam.tableid);
+                loadListData(result,initParam.tableid,initParam.opt);
                 initPage(initParam,data.totalPage + 1);
                 //$(".trigger-success").trigger("click");
                 showSuccessMsg('数据加载成功...');
@@ -136,7 +136,7 @@ function initList(initParam){
     });
 }
 
-function loadListData(result,tableid){
+function loadListData(result,tableid,opt){
     var fields = [];
     $('#' + tableid + ' thead th').each(function(){
         var field = $(this).attr("field");
@@ -153,22 +153,37 @@ function loadListData(result,tableid){
             var f2 = fields[j].split("|");
             var field = f2[0];
             var v = result[i][''+ field +''];
-            if(v){
-                if(field == "id"){
-                    coment += "<td style=\"display: none\">" + v + "</td>";
-                }else{
-                    if(f2.length > 1){
-                        var datatype = f2[1];
-                        if(datatype == "date"){
-                            var newtime = new Date(v);
-                            coment += "<td>" + formatDate(newtime,"yyyy-MM-dd") + "</td>";
+            if(field == "opt"){
+                if(opt && opt != ""){
+                    coment += "<td>";
+                    for(var x=0;x<opt.length;x++){
+                        if(x == 0){
+                            coment += "<a style=\"cursor: pointer\" onclick=\"" + opt[x].functionName + "("+ result[i]['id'] +")\">"+ opt[x].showContent +"</a>";
+                        }else{
+                            coment += "&nbsp;<a style=\"cursor: pointer\" onclick=\"" + opt[x].functionName + "("+ result[i]['id'] +")\">"+ opt[x].showContent +"</a>";
                         }
-                    }else{
-                        coment += "<td>" + v + "</td>";
                     }
+                    //alert("<span onclick='add('1');' ></span></td>");
+                    coment += "</td>";
                 }
             }else{
-                coment += "<td></td>";
+                if(v){
+                    if(field == "id"){
+                        coment += "<td style=\"display: none\">" + v + "</td>";
+                    }else{
+                        if(f2.length > 1){
+                            var datatype = f2[1];
+                            if(datatype == "date"){
+                                var newtime = new Date(v);
+                                coment += "<td>" + formatDate(newtime,"yyyy-MM-dd") + "</td>";
+                            }
+                        }else{
+                            coment += "<td>" + v + "</td>";
+                        }
+                    }
+                }else{
+                    coment += "<td></td>";
+                }
             }
         }
         coment += "</tr>";
@@ -208,7 +223,7 @@ function reloadTable(initParam,page){
             pageClick = true;
             var result = data.result;
             if(result.length > 0){
-                loadListData(result,initParam.tableid);
+                loadListData(result,initParam.tableid,initParam.opt);
                 showSuccessMsg('数据加载成功...');
             }else{
                 //数据为空清空显示区域
@@ -314,3 +329,35 @@ function validIsEmpty(formId){
     });
     return hasEmpty;
 }
+//确认对话框
+function showConfirmDialog(title,content,confirmFunction,dialogId){
+    var m = "";
+    var body = document.body;
+    if(dialogId != undefined){ }else{dialogId = "confirmModal";}
+    m+="<div class=\"modal fade\" id=\""+ dialogId +"\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\">"
+    +"<div class=\"modal-dialog\"> <div class=\"modal-content\">";
+    if(title != ''){
+        m+="<div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>"
+        +"<h4 class=\"modal-title\" id=\"myModalLabel\">" + title + "</h4></div>";
+    }
+    if(content != ''){
+        m+="<div class=\"modal-body\">"+content+"</div>";
+    }
+    m+="<div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">关闭</button>";
+    if(confirmFunction != ''){
+        m+="<button type=\"button\" onclick=\""+ confirmFunction +";\" class=\"btn btn-primary\">确定</button>";
+    }
+    m+="</div></div></div></div>";
+    var defaultConfirmDialog = document.getElementById("defaultConfirmDialog");
+    if(defaultConfirmDialog != null){
+        defaultConfirmDialog.innerHTML = m;
+    }else{
+        var body = document.body;
+        var defaultConfirmDialog = document.createElement("div");
+        defaultConfirmDialog.id = "defaultConfirmDialog";
+        defaultConfirmDialog.innerHTML = m;
+        body.appendChild(defaultConfirmDialog);
+    }
+    $("#" + dialogId).modal("show");
+}
+

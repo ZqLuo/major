@@ -8,6 +8,7 @@ import com.example.entity.SysCode;
 import com.example.entity.SysMenu;
 import com.example.service.ProductService;
 import com.example.service.SysMenuService;
+import com.example.util.DateUtils;
 import com.example.util.PageReturn;
 import com.example.util.StringUtil;
 import com.example.vo.ProductQueryVo;
@@ -67,6 +68,9 @@ public class ProductController extends BaseController{
         SysMenu sysMenu = sysMenuService.getSysMenuByType(MenuTypeEnum.PRODUCT_MENU.getMenyType());
         if(StringUtil.isNotEmpty(id)){
             product = productService.getProductById(Integer.parseInt(id));
+            if(StringUtil.isNotEmpty(product.getPurchaseDate())){
+                product.setPurchaseDateStr(DateUtils.formatDate(product.getPurchaseDate(),"yyyy-MM-dd HH:mm:ss"));
+            }
         }
         //计量单位
         List<SysCode> measurementUnits = this.findSysCodesByType(SysCodeEnum.MEASUREMENT_UNIT);
@@ -85,7 +89,7 @@ public class ProductController extends BaseController{
         Product p = productService.getProductByNoAndProductType(product.getProductNo(),product.getProductType());
         AjaxJson ajaxJson = new AjaxJson();
         if(p != null){
-            if(!p.getId().equals(product.getId())){
+            if(!"0".equals(p.getDeleteTag()) && !p.getId().equals(product.getId())){
                 ajaxJson.setSuccess(false);
                 ajaxJson.setMsg("当前商品类型下已存在相同商品编号的商品");
                 return ajaxJson;
@@ -98,6 +102,14 @@ public class ProductController extends BaseController{
             ajaxJson.setSuccess(false);
             ajaxJson.setMsg("发生错误");
         }
+        return ajaxJson;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "delProduct")
+    public AjaxJson delProduct(String id){
+        AjaxJson ajaxJson = new AjaxJson();
+        productService.delProduct(id);
         return ajaxJson;
     }
 }

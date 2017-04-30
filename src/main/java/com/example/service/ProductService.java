@@ -38,4 +38,10 @@ public interface ProductService {
      * @return
      */
     Product getProductByNoAndProductType(String productNo, String productType);
+
+    /**
+     * 删除商品，逻辑删除
+     * @param id
+     */
+    void delProduct(String id);
 }

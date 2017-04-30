@@ -56,6 +56,11 @@ public class Product {
      */
     @Column(name = "remark",length = 512)
     private String remark;
+    /**
+     * 删除标识
+     */
+    @Column(name = "delete_tag",length = 1)
+    private String deleteTag = "1";
 
     public Integer getId() {
         return id;
@@ -143,5 +148,13 @@ public class Product {
 
     public void setPurchaseDateStr(String purchaseDateStr) {
         this.purchaseDateStr = purchaseDateStr;
+    }
+
+    public String getDeleteTag() {
+        return deleteTag;
+    }
+
+    public void setDeleteTag(String deleteTag) {
+        this.deleteTag = deleteTag;
     }
 }

@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
                 "from product p left join sys_code pt " +
                 "on (p.product_type = pt.code and pt.type = 'productType') " +
                 "left join sys_code mu " +
-                "on (p.measurement_unit = mu.code and mu.type = 'measurementUnit') where 1 = 1");
+                "on (p.measurement_unit = mu.code and mu.type = 'measurementUnit') where delete_tag = '1' ");
         if(productQuerty != null){
             if(StringUtil.isNotEmpty(productQuerty.getProductType())){
                 sql.append(" and product_type = ? ");
@@ -65,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
                 params.add(productQuerty.getProductNo());
             }
         }
-        sql.append(" order by purchase_date desc ");
+        sql.append(" order by purchase_date desc");
         return jdbcUtil.queryForPage(sql.toString(),page,size, Product.class,params.toArray());
     }
 
@@ -78,17 +78,23 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = false,rollbackFor = Exception.class)
     public void createOrUpdateProduct(Product product) {
         if(StringUtil.isNotEmpty(product.getPurchaseDateStr())){
-            product.setPurchaseDate(DateUtils.parse(product.getPurchaseDateStr(),"yyyy-MM-dd"));
+            product.setPurchaseDate(DateUtils.parse(product.getPurchaseDateStr(),"yyyy-MM-dd HH:mm:ss"));
         }else {
             product.setPurchaseDate(new Date());
         }
         productRepository.save(product);
-//        product = new Product();
-//        product.getId();
     }
 
     @Override
     public Product getProductByNoAndProductType(String productNo, String productType) {
         return productRepository.getProductByNoAndProductType(productNo,productType);
+    }
+
+    @Override
+    @Transactional(readOnly = false,rollbackFor = Exception.class)
+    public void delProduct(String id) {
+        Product product = productRepository.findOne(Integer.parseInt(id));
+        product.setDeleteTag("0");
+        productRepository.save(product);
     }
 }
