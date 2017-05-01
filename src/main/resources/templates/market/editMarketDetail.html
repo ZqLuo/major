@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/jjwm.ico}"/>
+    <title>斤斤屋谜</title>
+    <!--<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}"/>-->
+    <!--<script th:src="@{/jquery/jquery-3.0.0.min.js}" ></script>-->
+    <!--<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>-->
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/tooltips/iziToast.css}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap-datetimepicker.min.css}"/>
+    <script th:inline="javascript">
+        var productCodeMap = {};
+        $(function(){
+            var marketDetailList = [[${marketDetailList}]];
+            var productCodes = [[${productCodes}]];
+            $.each(productCodes,function(index,value){
+                var key = "productId" + value.code;
+                productCodeMap[key] = value.name;
+            });
+            $('#marketDetailModal').on('hide.bs.modal', function () {
+                //关闭，清空对话框中的校验结果提示
+                $.each($('#marketDetailForm input,select'), function(i, v){
+                    $("#"+v.id).parent().parent("div").removeClass("has-error");
+                    $("#"+v.id).parent().parent("div").removeClass("has-success");
+                });
+            });
+            initTable(marketDetailList);
+
+        });
+        function initTable(marketDetailList){
+            var tableContent = "";
+            $.each(marketDetailList,function(index,marketDetail){
+                tableContent += '<tr id="marketDetailId'+ marketDetail.id +'">';
+                tableContent += getTableRowContent(marketDetail);
+                tableContent += '</tr>';
+            });
+            $("#marketDetailTable tbody").html(tableContent);
+        }
+        function getTableRowContent(marketDetail){
+            var tableContent = '<td style="display: none;" >'+ marketDetail.id +'</td>';
+            tableContent += '<td style="display: none;" >'+ marketDetail.product.id +'</td>';
+            var productType = "productId" + marketDetail.product.productType;
+            tableContent += '<td productType="'+ marketDetail.product.productType +'">'+ productCodeMap[''+ productType +''] +'</td>';
+            tableContent += '<td>'+ marketDetail.product.productNo +'</td>';
+            tableContent += '<td>'+ marketDetail.singlePrice +'</td>';
+            tableContent += '<td>'+ marketDetail.quantity +'</td>';
+            tableContent += '<td>'+ marketDetail.totalPrice +'</td>';
+            tableContent += '<td><span style="cursor: pointer;" onclick="edit(' + marketDetail.id + ');" class="label label-success">编辑</span>&nbsp;' +
+                    '<span style="cursor: pointer;" onclick="del(' + marketDetail.id + ');" class="label label-danger">删除</span></td>';
+            return tableContent;
+        }
+        function goPrePage(){
+            var preMenuUrl = [[${preMenuUrl}]];
+            //返回上一页
+            window.location.href = preMenuUrl;
+        }
+        function edit(id){
+            var productType = $("#marketDetailId"+id + " td:eq(2)").attr("productType");
+            $("#productType").val(productType);
+            //获取表格中的值
+            $.each($("#marketDetailId"+id + " td"),function(index,value){
+                if(index == 0){
+                    $("#marketDetailId").val(value.innerHTML);
+                }else if(index == 4){
+                    $("#singlePrice").val(value.innerHTML);//单价
+                }else if(index == 5){
+                    $("#quantity").val(value.innerHTML);//数量
+                }else if(index == 6){
+                    $("#totalPrice").val(value.innerHTML);//总计
+                }
+            });
+            //下拉框自动选中
+            productSelectOnChange();
+            var productId = $("#marketDetailId"+id + " td:eq(1)").html();
+            $("#productNo").val(productId);
+            $("#marketDetailModal").modal("show");
+        }
+        function productSelectOnChange(){
+            $.ajax({
+                url:'/productController/getProductNo',
+                type:'POST',
+                data : {productType:$("#productType").val()},
+                async : false,
+                success:function (data) {
+                    if (data != '') {
+                        var productNoSelectContent = "";
+                        for (var key in data) {
+                            var id = key.substring(9, key.length);//js中map的key不能为数字，每个key前面加上productId
+                            var value = data[key];
+                            productNoSelectContent += '<option value="' + id + '">' + value + '</option>';
+                        }
+                        $("#productNo").html(productNoSelectContent);
+                    }
+                }
+            });
+        }
+        function del(id){
+            showConfirmDialog("是否删除","","delCallback(" + id + ")","mydialog");
+//
+        }
+        function delCallback(id){
+            $.ajax({
+                url:'/marketController/delMarketDeatil',
+                type:'POST',
+                data : {id:id},
+                async : false,
+                success:function (data) {
+                    var success = data.success;
+                    if(success){
+                        $("#mydialog").modal("hide");
+                        $("#marketDetailId"+id).remove();
+                    }else{
+                        showErrorMsg(data.msg);
+                    }
+                }
+            });
+        }
+        function add(){
+            $("#marketDetailId").val("");
+            $("#singlePrice").val("");//单价
+            $("#quantity").val("");//数量
+            $("#totalPrice").val("");//总计
+            productSelectOnChange();//默认选择商品编号
+            $("#marketDetailModal").modal("show");
+        }
+        function save(){
+            //空值校验
+            if(validIsEmpty('marketDetailForm')){
+                var marketDetail = {};
+                marketDetail['id'] = $("#marketDetailId").val();
+                marketDetail['product.id'] = $("#productNo").val();
+                marketDetail['product.productType'] =$("#productType").val();
+                marketDetail['product.productNo'] =$("#productNo").find("option:selected").text();
+                marketDetail['market.id'] = $("#marketId").val();
+                marketDetail['singlePrice'] = $("#singlePrice").val();
+                marketDetail['quantity'] = $("#quantity").val();
+                marketDetail['totalPrice'] = $("#totalPrice").val();
+                $.ajax({
+                    url:'/marketController/editMarketDeatil',
+                    type:'POST',
+                    data : marketDetail,
+                    async : false,
+                    success:function (data) {
+                        var success = data.success;
+                        if(success){
+                            var id = data.obj.id;
+                            var tableContent = getTableRowContent(data.obj);
+                            if($("#marketDetailId" + id).html() == undefined){
+                                tableContent = '<tr id="marketDetailId'+ id +'">' + tableContent + '</tr>';
+                                $("#marketDetailTable tbody").append(tableContent);
+                            }else{
+                                $("#marketDetailId" + id).html(tableContent);
+                            }
+                            $("#marketDetailModal").modal("hide");
+                            showSuccessMsg(data.msg)
+                            //window.setTimeout(goPrePage,3000);
+                        }else{
+                            $("#marketDetailModal").modal("hide");
+                            showErrorMsg(data.msg);
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+<ol class="breadcrumb">
+    <li><a th:href="${preMenuUrl}">销售管理</a></li>
+    <li><a th:href="${marketEditUrl}">销售编辑</a></li>
+    <li class="active">销售详细编辑</li>
+</ol>
+<input th:value="${marketId}" type="hidden" id="marketId"/>
+<div class="container" id="indexContainer">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover" id="marketDetailTable">
+                <caption>销售详细列表&nbsp; <button type="button" onclick="add()" class="btn btn-success">新增</button></caption>
+                <thead>
+                <tr>
+                    <th style="display: none;">id</th>
+                    <th style="display: none;">productId</th>
+                    <th>商品类型</th>
+                    <th>商品编号</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>总计</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" data-backdrop="static" id="marketDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <input type="hidden" id="marketDetailId"/>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">销售详细编辑</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" id="marketDetailForm">
+                    <div class="form-group">
+                        <label for="productType" class="col-sm-3 control-label">商品类型</label>
+                        <div class="col-sm-6">
+                            <select id="productType" class="form-control" onchange="productSelectOnChange();">
+                                <option th:each="productType:${productCodes}" th:value="${productType.code}" th:text="${productType.name}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="productNo" class="col-sm-3 control-label">商品编号</label>
+                        <div class="col-sm-6">
+                            <select id="productNo" class="form-control" >
+                                <option></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="singlePrice" class="col-sm-3 control-label">单价</label>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="singlePrice" placeholder="请输入数量"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity" class="col-sm-3 control-label">数量</label>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="quantity" placeholder="请输入数量"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="totalPrice" class="col-sm-3 control-label">总计</label>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="totalPrice" placeholder="请输入数量"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="save();" class="btn btn-primary">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script th:src="@{/js/tooltips/iziToast.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/util.js}"></script>
+<script>
+    iziToast.settings({
+        timeout: 3000,
+        // position: 'center',
+        // imageWidth: 50,
+        pauseOnHover: false,
+        // resetOnHover: true,
+        close: true,
+        progressBar: true,
+        // layout: 1,
+        // balloon: true,
+        // target: '.target',
+        // icon: 'material-icons',
+        // iconText: 'face',
+        // animateInside: false,
+        // transitionIn: 'flipInX',
+        // transitionOut: 'flipOutX',
+    });
+    var token = $('meta[name="_csrf"]').attr("content");
+    var header = $('meta[name="_csrf_hader"]').attr("content");
+    $(document).ajaxSend(function(e,xhr,opt){
+        xhr.setRequestHeader(header,token);
+    });
+</script>
+</body>
+</html>

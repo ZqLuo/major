@@ -130,4 +130,12 @@ public class JdbcUtil<T> {
         BeanUtils.populate(o, map);
         return o;
     }
+
+    public List<Map<String,Object>> queryForListMap(String sql,Object...params){
+        return jdbcTemplate.queryForList(sql,params);
+    }
+
+    public List queryForList(String sql,Class clazz,Object...params){
+        return jdbcTemplate.queryForList(sql,clazz,params);
+    }
 }

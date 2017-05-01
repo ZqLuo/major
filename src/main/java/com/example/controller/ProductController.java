@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品controller
@@ -111,5 +113,23 @@ public class ProductController extends BaseController{
         AjaxJson ajaxJson = new AjaxJson();
         productService.delProduct(id);
         return ajaxJson;
+    }
+
+    /**
+     * 根据商品类型获取商品编号
+     * @param productType
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "getProductNo")
+    public Map<String,Object> getProductNoByProductype(String productType){
+        List<Map<String,Object>> list = productService.getProductNoByProductype(productType);
+        Map<String,Object> map = new HashMap<String,Object>();
+        if(list != null && list.size()>0){
+            for(Map<String,Object> m : list){
+                map.put("procuctId"+m.get("PRODUCTID"),m.get("PRODUCTNO"));
+            }
+        }
+        return map;
     }
 }

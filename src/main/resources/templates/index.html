@@ -25,17 +25,6 @@
         //屏幕可显示高度 - 导航栏高度 - 页脚高度
         var showHeight = $(window).height() - $("#indexNav").height() - $("#indexFooter").height() - 20;
         //$("#indexContainer").height(showHeight);
-        $('#pagination-demo').twbsPagination({
-            totalPages: 35,
-            visiblePages: 5,
-            first:'&lt;&lt;',
-            prev:'&lt;',
-            next:'&gt;',
-            last:'&gt;&gt;',
-            onPageClick: function (event, page) {
-                $('#page-content').text('Page ' + page);
-            }
-        });
         initMenu("indexNav","");
     });
 </script>

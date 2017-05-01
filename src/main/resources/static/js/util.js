@@ -121,9 +121,10 @@ function initList(initParam){
             var result = data.result;
             if(result.length > 0){
                 loadListData(result,initParam.tableid,initParam.opt);
-                initPage(initParam,data.totalPage + 1);
+                initPage(initParam,data.totalPage);
                 //$(".trigger-success").trigger("click");
                 showSuccessMsg('数据加载成功...');
+                $("html,body").animate({scrollTop:$("#"+initParam.tableid).offset().top}, 800);
             }else{
                 //数据为空清空显示区域
                 $("#"+initParam.tableid + " tbody").html("");
@@ -176,6 +177,9 @@ function loadListData(result,tableid,opt){
                             if(datatype == "date"){
                                 var newtime = new Date(v);
                                 coment += "<td>" + formatDate(newtime,"yyyy-MM-dd") + "</td>";
+                            }else if(datatype = "datetime"){
+                                var newtime = new Date(v);
+                                coment += "<td>" + formatDate(newtime,"yyyy-MM-dd HH:mm:ss") + "</td>";
                             }
                         }else{
                             coment += "<td>" + v + "</td>";
@@ -225,6 +229,7 @@ function reloadTable(initParam,page){
             if(result.length > 0){
                 loadListData(result,initParam.tableid,initParam.opt);
                 showSuccessMsg('数据加载成功...');
+                $("html,body").animate({scrollTop:$("#"+initParam.tableid).offset().top}, 800);
             }else{
                 //数据为空清空显示区域
                 $("#"+initParam.tableid + " tbody").html("");

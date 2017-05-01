@@ -4,6 +4,9 @@ import com.example.entity.Product;
 import com.example.util.PageReturn;
 import com.example.vo.ProductQueryVo;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 商品service
  * Created by zqLuo
@@ -44,4 +47,11 @@ public interface ProductService {
      * @param id
      */
     void delProduct(String id);
+
+    /**
+     * 根据商品类型获取商品编号
+     * @param productType
+     * @return
+     */
+    List<Map<String,Object>> getProductNoByProductype(String productType);
 }

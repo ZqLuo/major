@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by zqLuo
@@ -96,5 +94,11 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findOne(Integer.parseInt(id));
         product.setDeleteTag("0");
         productRepository.save(product);
+    }
+
+    @Override
+    public List<Map<String,Object>> getProductNoByProductype(String productType) {
+        String sql = "select product_no PRODUCTNO,id PRODUCTID  from product where product_type = ?";
+        return jdbcUtil.queryForListMap(sql,productType);
     }
 }

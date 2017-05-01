@@ -49,7 +49,11 @@ public class PageReturn {
     }
 
     public int getTotalPage() {
-        return this.total/this.getPageSize();
+        int pageCount = this.total/this.getPageSize();
+        if(this.total%this.getPageSize() > 0){
+            pageCount += 1;
+        }
+        return pageCount;
     }
 
     public void setTotalPage(int totalPage) {

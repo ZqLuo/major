@@ -38,29 +38,31 @@
         }
         function save(){
             //空值校验
-            if(validIsEmpty('productForm')){
-                var product = {};
-                $.each($("#productForm input,select,textarea"), function(i, v){
+            if(validIsEmpty('marketForm')){
+                var market = {};
+                $.each($("#marketForm input,select,textarea"), function(i, v){
                     var value = v.value;
                     if(value) {
-                        product[v.id] = value ;
+                        market[v.id] = value ;
                     };
                 });
                 $.ajax({
-                    url:'/productController/editProduct',
+                    url:'/marketController/editMarket',
                     type:'POST',
-                    data : product,
+                    data : market,
                     async : false,
                     success:function (data) {
                         var success = data.success;
                         if(success){
+                            var id = data.msg;
+                            $("#id").val(id);
                             //$("#successModel").modal("show");
                             $('#successModel').modal({
                                 keyboard: false
                             });
                             $('#successModel .close').hide()
                             //showSuccessMsg(data.msg)
-                            window.setTimeout(goPrePage,3000);
+                            //window.setTimeout(goPrePage,3000);
                         }else{
                             showErrorMsg(data.msg);
                         }
@@ -68,76 +70,71 @@
                 });
             }
         }
+        function goMarketDetailPage(){
+            var marketId = $("#id").val();
+            if(marketId == ''){
+                showErrorMsg("请先保存销售信息");
+                return;
+            }
+            window.location.href = "/marketController/goMarketDetailPage?marketId=" + marketId;
+        }
     </script>
 </head>
 <body>
 <ol class="breadcrumb">
-    <li><a th:href="${preMenuUrl}">商品管理</a></li>
-    <li class="active">商品编辑</li>
+    <li><a th:href="${preMenuUrl}">销售管理</a></li>
+    <li class="active">销售编辑</li>
 </ol>
 <div class="container" id="indexContainer">
     <div class="row">
-        <form class="form-horizontal" role="form" id="productForm">
-            <input type="hidden" th:value="${product.id}" id="id"/>
-            <div class="form-group">
-                <label for="productNo" class="col-sm-3 control-label">商品编号</label>
-                <div class="col-sm-6">
-                    <input type="text" class="form-control" id="productNo" th:value="${product.productNo}" placeholder="请输入商品编号"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="productType" class="col-sm-3 control-label">商品类型</label>
-                <div class="col-sm-6">
-                    <select id="productType" class="form-control" >
-                        <option th:each="productType:${productTypes}" th:selected="${productType.code==product.productType}" th:value="${productType.code}" th:text="${productType.name}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="quantity" class="col-sm-3 control-label">数量</label>
-                <div class="col-sm-6">
-                    <input type="number" class="form-control" id="quantity" th:value="${product.quantity}" placeholder="请输入数量"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="measurementUnit" class="col-sm-3 control-label">单位</label>
-                <div class="col-sm-6">
-                    <select id="measurementUnit" class="form-control" >
-                        <option th:each="measurementUnit:${measurementUnits}" th:selected="${measurementUnit.code==product.measurementUnit}" th:value="${measurementUnit.code}" th:text="${measurementUnit.name}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="price" class="col-sm-3 control-label">价格</label>
-                <div class="col-sm-6">
-                    <input type="number" class="form-control" th:value="${product.price}" id="price" placeholder="请输入价格"/>
-                </div>
-            </div>
-            <div class="form-group form-inline">
-                <label for="purchaseDateStr" class="col-sm-3 control-label">日期</label>
-                &nbsp;&nbsp;&nbsp;
-                <div class="input-group date form_datetime col-sm-5" data-date="${product.purchaseDateStr}"
-                     data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="purchaseDateStr">
-                <input class="form-control" size="16" type="text" th:value="${product.purchaseDateStr}" readonly="readonly"/>
-                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-                <input type="hidden" id="purchaseDateStr" th:value="${product.purchaseDateStr}" />
+        <div class="col-md-12">
+            <form class="form-horizontal" role="form" id="marketForm">
+                <input type="hidden" th:value="${market.id}" id="id"/>
+                <div class="form-group">
+                    <label for="marketNo" class="col-sm-3 control-label">销售编号</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" readonly="readonly" id="marketNo" th:value="${market.marketNo}"/>
                     </div>
-            </div>
-            <div class="form-group">
-                <label for="remark" class="col-sm-3 control-label">备注</label>
-                <div class="col-sm-6">
-                    <textarea class="form-control" id="remark" th:text="${product.remark}" rows="3"></textarea>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-3"></div>
-                <div class="col-sm-9">
-                    <button type="button" onclick="save()" class="btn btn-success">保存</button>
-                    <button type="button" data-toggle="modal" data-target="#confirmModal" class="btn btn-danger">取消</button>
+                <div class="form-group">
+                    <label for="customerName" class="col-sm-3 control-label">客户名称</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="customerName" th:value="${market.customerName}" placeholder="请输入客户名称"/>
+                    </div>
                 </div>
-            </div>
-        </form>
+                <div class="form-group">
+                    <label for="price" class="col-sm-3 control-label">价格</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" th:value="${market.price}" id="price" placeholder="请输入价格"/>
+                    </div>
+                </div>
+                <div class="form-group form-inline">
+                    <label for="marketDateStr" class="col-sm-3 control-label">日期</label>
+                    &nbsp;&nbsp;&nbsp;
+                    <div class="input-group date form_datetime col-sm-5" data-date=""
+                         data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="marketDateStr">
+                        <input class="form-control" size="16" type="text" th:value="${market.marketDateStr}" readonly="readonly"/>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        <input type="hidden" id="marketDateStr" th:value="${market.marketDateStr}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="remark" class="col-sm-3 control-label">备注</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" id="remark" th:text="${market.remark}" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-9">
+                        <button type="button" onclick="save()" class="btn btn-success">保存</button>
+                        <button type="button" data-toggle="modal" data-target="#confirmModal" class="btn btn-danger">取消</button>
+                        <button type="button" onclick="goMarketDetailPage();" class="btn btn-primary">编辑销售详细</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 <div class="modal fade" data-backdrop="static" id="successModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -145,12 +142,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title" id="myModalLabel" style="color: green;">保存成功,将在3秒后返回商品列表</h4>
+                <h4 class="modal-title" id="myModalLabel">保存成功</h4>
             </div>
-            <!--<div class="modal-footer">-->
-                <!--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>-->
-                <!--<button type="button" class="btn btn-primary">提交更改</button>-->
-            <!--</div>-->
+            <div class="modal-footer">
+                <button type="button" onclick="goPrePage();" class="btn btn-default">返回上一页</button>
+                <button type="button" onclick="goMarketDetailPage();" class="btn btn-primary">编辑销售详细内容</button>
+            </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
