@@ -41,6 +41,8 @@ public class MarketController extends BaseController {
 
     @RequestMapping("marketListPage")
     public String marketListPage(Model model){
+        List<SysCode> productTypes = findSysCodesByType(SysCodeEnum.PRODUCT_TYPE);
+        model.addAttribute("productTypes",productTypes);
         return "market/marketList";
     }
 

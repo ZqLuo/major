@@ -110,11 +110,11 @@ function getSearchParam(eid){
 }
 
 function initList(initParam){
-    //var params = getSearchParam(initParam.searchid);
+    var params = getSearchParam(initParam.searchid);
     $.ajax({
         url:initParam.url,
         type:'POST',
-        data : {},
+        data : params,
         async : false,
         success:function (data) {
             pageClick = false;

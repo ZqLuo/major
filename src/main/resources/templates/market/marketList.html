@@ -96,7 +96,7 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="row" id="searchDiv">
-                <div class="col-md-2 col-sm-2 col-xs-12 form-inline">
+                <div class="col-md-3 col-sm-2 col-xs-12 form-inline">
                     <label>商品类型:</label>
                     <select id="productType" class="form-control" >
                         <option value="">全部</option>
@@ -105,23 +105,27 @@
                     </select>
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-12 form-inline">
-                    <label>编号:</label>
+                    <label>商品编号:</label>
                     <input  type="text" class="form-control" id="productNo" placeholder="请输入商品编号"/>
                 </div>
-                <div class="col-md-7 col-sm-7 col-xs-12 form-inline">
-                    <label for="purchaseDateBegin">日期范围选择：</label>
-                    <div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="purchaseDateBegin" data-link-format="yyyy-mm-dd">
+                <div class="col-md-3 col-sm-3 col-xs-12 form-inline">
+                    <label>客户名称:</label>
+                    <input  type="text" class="form-control" id="customerName" placeholder="请输入客户名称"/>
+                </div>
+                <div style="margin-top: 5px;" class="col-md-12 col-sm-12 col-xs-12 form-inline">
+                    <label for="marketDateBegin">日期范围选择：</label>
+                    <div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="marketDateBegin" data-link-format="yyyy-mm-dd">
                         <input class="form-control" size="16" type="text" value="" readonly="readonly"/>
                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                     </div>
-                    <input type="hidden" id="purchaseDateBegin" value="" />
-                    <div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="purchaseDateEnd" data-link-format="yyyy-mm-dd">
+                    <input type="hidden" id="marketDateBegin" value="" />
+                    <div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="marketDateEnd" data-link-format="yyyy-mm-dd">
                         <input class="form-control" size="16" type="text" value="" readonly="readonly"/>
                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                     </div>
-                    <input type="hidden" id="purchaseDateEnd" value="" />
+                    <input type="hidden" id="marketDateEnd" value="" />
                 </div>
             </div>
             <div class="row" style="margin-top: 5px;">

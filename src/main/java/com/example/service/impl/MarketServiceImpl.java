@@ -10,7 +10,6 @@ import com.example.util.JdbcUtil;
 import com.example.util.PageReturn;
 import com.example.util.StringUtil;
 import com.example.vo.MarketQueryVo;
-import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +37,26 @@ public class MarketServiceImpl implements MarketService {
         StringBuffer sql = new StringBuffer();
         List<Object> params = new ArrayList<Object>();
         sql.append("select m.id, customer_name customerName, market_date marketDate, market_no marketNo, price, remark from market m where m.delete_tag = '1' ");
-
+        if(StringUtil.isNotEmpty(marketQueryVo.getProductType())){
+            sql.append(" and m.id in (select md.market_id from market_detail md,product p where p.id = md.product_id and p.product_type = ?) ");
+            params.add(marketQueryVo.getProductType());
+        }
+        if(StringUtil.isNotEmpty(marketQueryVo.getProductNo())){
+            sql.append(" and m.id in (select md.market_id from market_detail md,product p where p.id = md.product_id and p.product_no = ?) ");
+            params.add(marketQueryVo.getProductNo());
+        }
+        if(StringUtil.isNotEmpty(marketQueryVo.getMarketDateBegin())){
+            sql.append(" and market_date >= str_to_date(?,'%Y-%m-%d %H:%i:%s')");
+            params.add(marketQueryVo.getMarketDateBegin()+" 00:00:00");
+        }
+        if(StringUtil.isNotEmpty(marketQueryVo.getMarketDateEnd())){
+            sql.append(" and market_date <= str_to_date(?,'%Y-%m-%d %H:%i:%s')");
+            params.add(marketQueryVo.getMarketDateEnd()+" 23:59:59");
+        }
+        if(StringUtil.isNotEmpty(marketQueryVo.getCustomerName())){
+            sql.append(" and customer_name like ? ");
+            params.add(marketQueryVo.getCustomerName()+"%");
+        }
         sql.append(" order by m.market_date desc ");
         return jdbcUtil.queryForPage(sql.toString(),page,size,Market.class,params.toArray());
     }
