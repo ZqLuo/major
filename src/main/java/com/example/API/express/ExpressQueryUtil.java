@@ -48,7 +48,6 @@ public class ExpressQueryUtil {
             HttpResponse response = HttpUtils.doGet(API.getShowapihost(),path,"GET",headers,query);
             String result = EntityUtils.toString(response.getEntity());
             showapiExpInfo = JSON.parseObject(result,ShowapiExpInfo.class);
-            logger.info(result);
         } catch (Exception e) {
             logger.error("快递信息查询失败",e);
             showapiExpInfo.setShowapi_res_code("-1");
@@ -80,7 +79,6 @@ public class ExpressQueryUtil {
             HttpResponse response = HttpUtils.doGet(API.getShowapihost(),path,"GET",headers,query);
             String result = EntityUtils.toString(response.getEntity());
             fetchCom = JSON.parseObject(result,FetchCom.class);
-            logger.info(result);
         } catch (Exception e) {
             logger.error("快递信息查询失败",e);
             fetchCom.setShowapi_res_code("-1");
@@ -116,7 +114,6 @@ public class ExpressQueryUtil {
             HttpResponse response = HttpUtils.doGet(API.getShowapihost(),path,"GET",headers,query);
             String result = EntityUtils.toString(response.getEntity());
             expressList = JSON.parseObject(result,ExpressList.class);
-            logger.info(result);
         } catch (Exception e) {
             logger.error("快递信息查询失败",e);
             expressList.setShowapi_res_code("-1");

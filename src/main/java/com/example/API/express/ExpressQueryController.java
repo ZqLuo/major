@@ -1,5 +1,6 @@
 package com.example.API.express;
 
+import com.example.controller.BaseController;
 import com.example.service.DemoService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/expressQuery")
-public class ExpressQueryController {
+public class ExpressQueryController extends BaseController{
+
 
     @Autowired
     private ExpressQueryUtil expressQueryUtil;
@@ -21,7 +23,9 @@ public class ExpressQueryController {
 
     @RequestMapping("showapiExpInfo")
     public ShowapiExpInfo showapiExpInfo(String com,String nu){
-        return expressQueryUtil.showapiExpInfo(com,nu);
+        ShowapiExpInfo showapiExpInfo =  expressQueryUtil.showapiExpInfo(com,nu);
+        logger.info(getIpAddress() + "，快递：" + nu);
+        return showapiExpInfo;
     }
 
     @RequestMapping("fetchCom")
