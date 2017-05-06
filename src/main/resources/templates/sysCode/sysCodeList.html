@@ -8,7 +8,7 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
     <link rel="icon" type="image/x-icon" href="/image/favicon.ico"/>
-    <title>斤斤屋谜</title>
+    <title>系统编码</title>
     <!--<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}"/>-->
     <!--<script th:src="@{/jquery/jquery-3.0.0.min.js}" ></script>-->
     <!--<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>-->
@@ -22,10 +22,11 @@
     <script th:src="@{/bootstrap/js/bootstrap-datetimepicker.min.js}"></script>
     <script th:src="@{/bootstrap/js/bootstrap-datetimepicker.zh-CN.js}"></script>
 </head>
-<script>
+<script th:inline="javascript">
+    var menuType = [[${menuType}]];
     var initParam = {
         "tableid" : "showListTable", //表格字段
-        "url" : "/productController/productList",
+        "url" : "/sysCodeController/sysCodeList",
         "optstr" : "数据操作字段",
         "searchid" : "searchDiv",
         "pageidc" : "pagination-c",
@@ -47,24 +48,17 @@
 //                '<span style="cursor: pointer" class='label label-danger'>删除</span>'
     }
     $(function(){
-        initMenu("indexNav","productMenu");
+        initMenu("indexNav",menuType);
         initList(initParam);
-        $('.form_date').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            todayBtn:  1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 0
-        });
     });
     function search(){
         initList(initParam);
     }
     function add(id){
-        window.location.href = "/productController/editProductPage?id=" + id;
+        var sysCodeType = $("#sysCodeType").val();
+        /*<![CDATA[*/
+        window.location.href = "/sysCodeController/editSysCodePage?id=" + id + "&type=" + sysCodeType;
+        /*]]>*/
     }
     function del(id){
 //        alert(id);
@@ -72,7 +66,7 @@
     }
     function delCallback(id){
         $.ajax({
-            url:"/productController/delProduct",
+            url:"/sysCodeController/delSysCode",
             type:'POST',
             data : {id:id},
             async : false,
@@ -96,35 +90,13 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="row" id="searchDiv">
-                <div class="col-md-2 col-sm-2 col-xs-12 form-inline">
-                    <label>商品类型:</label>
-                    <select id="productType" class="form-control" >
-                        <option value="">全部</option>
-                        <option th:each="productType:${productTypes}" th:value="${productType.code}" th:text="${productType.name}">
+                <div class="col-md-3 col-sm-3 col-xs-12 form-inline">
+                    <label>系统编码类型:</label>
+                    <select id="sysCodeType" class="form-control" >
+                        <option th:each="sysCodeType:${sysCodeTypes}" th:value="${sysCodeType.code}" th:text="${sysCodeType.name}">
                         </option>
                     </select>
                 </div>
-                <div class="col-md-3 col-sm-3 col-xs-12 form-inline">
-                    <label>编号:</label>
-                    <input  type="text" class="form-control" id="productNo" placeholder="请输入商品编号"/>
-                </div>
-                <div class="col-md-7 col-sm-7 col-xs-12 form-inline">
-                    <label for="purchaseDateBegin">日期范围选择：</label>
-                    <div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="purchaseDateBegin" data-link-format="yyyy-mm-dd">
-                        <input class="form-control" size="16" type="text" value="" readonly="readonly"/>
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-                    </div>
-                    <input type="hidden" id="purchaseDateBegin" value="" />
-                    <div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="purchaseDateEnd" data-link-format="yyyy-mm-dd">
-                        <input class="form-control" size="16" type="text" value="" readonly="readonly"/>
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-                    </div>
-                    <input type="hidden" id="purchaseDateEnd" value="" />
-                </div>
-            </div>
-            <div class="row" style="margin-top: 5px;">
                 <div class="col-md-6 col-sm-6 col-xs-12 form-inline">
                     <button type="button" onclick="search();" class="btn btn-primary">查询</button>
                     <button type="button" data-toggle="modal" onclick="add('');" class="btn btn-success">新增</button>
@@ -135,17 +107,14 @@
     <div class="row">
         <div class="table-responsive">
             <table id="showListTable" class="table table-hover">
-                <caption>商品列表 </caption>
+                <caption>系统编码列表 </caption>
                 <thead>
                 <tr>
                     <th field="id" style="display: none">编号</th>
-                    <th field="productNo">商品编号</th>
-                    <th field="productTypeName">商品类型</th>
-                    <th field="quantity">数量</th>
-                    <th field="measurementUnitName">单位</th>
-                    <th field="price">价格</th>
-                    <th field="purchaseDate" datatype="date">进货日期</th>
-                    <th field="opt">操作</th>
+                    <th field="code">编码</th>
+                    <th field="name">名称</th>
+                    <th field="ora">排序</th>
+                    <th width="20%" field="opt">操作</th>
                 </tr>
                 </thead>
                 <tbody>

@@ -1,5 +1,10 @@
 package com.example.constant;
 
+import com.example.entity.SysCode;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 系统编码枚举
  * Created by zqLuo
@@ -42,5 +47,16 @@ public enum SysCodeEnum {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public static List<SysCode> getAllSysCodeType(){
+        List<SysCode> sysCodes = new ArrayList<SysCode>();
+        for(SysCodeEnum sysCodeEnum : SysCodeEnum.values()){
+            SysCode sysCode = new SysCode();
+            sysCode.setCode(sysCodeEnum.getType());
+            sysCode.setName(sysCodeEnum.getName());
+            sysCodes.add(sysCode);
+        }
+        return sysCodes;
     }
 }

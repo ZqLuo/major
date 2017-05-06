@@ -21,7 +21,7 @@ public class BaseController {
     @Autowired
     private HttpServletRequest request;
     @Autowired
-    private SysCodeService sysCodeService;
+    public SysCodeService sysCodeService;
 
     public SysUser findLoginUser(){
         SecurityContextImpl securityContextImpl = (SecurityContextImpl)request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");

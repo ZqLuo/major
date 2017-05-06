@@ -7,7 +7,8 @@ package com.example.constant;
 public enum MenuTypeEnum {
 
     MARKET_MENU("marketMenu","销售管理菜单"),
-    PRODUCT_MENU("productMenu","商品管理菜单");
+    PRODUCT_MENU("productMenu","商品管理菜单"),
+    SYSCODE_MENU("sysCodeMenu","系统编码菜单");
 
 
     private String menyType;
@@ -34,4 +35,5 @@ public enum MenuTypeEnum {
     public void setName(String name) {
         this.name = name;
     }
+
 }
