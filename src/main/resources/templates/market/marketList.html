@@ -23,6 +23,7 @@
     <script th:src="@{/bootstrap/js/bootstrap-datetimepicker.zh-CN.js}"></script>
 </head>
 <script>
+    var productCodeMap = {};
     var initParam = {
         "tableid" : "showListTable", //表格字段
         "url" : "/marketController/marketList",
@@ -38,6 +39,10 @@
             {
                 showContent : '<span class="label label-danger">删除</span>',
                 functionName : "del"
+            },
+            {
+                showContent : '<span class="label label-info">详细</span>',
+                functionName : "view"
             }
         ]
 //
@@ -58,6 +63,12 @@
             startView: 2,
             minView: 2,
             forceParse: 0
+        });
+        $.each($("#productType option"),function(i,value){
+            if(value.value != ''){
+                var key = "productId" + value.value;
+                productCodeMap[key] = value.text;
+            }
         });
     });
     function search(){
@@ -87,6 +98,47 @@
             }
         });
         $("#mydialog").modal("hide");
+    }
+    //详细
+    function view(id){
+        $.ajax({
+            url:"/marketController/viewMarket",
+            type:'POST',
+            data : {marketId:id},
+            async : false,
+            success:function (data) {
+//                var success = data.success;
+//                if(success){
+//                    showSuccessMsg("删除成功");
+//                    initList(initParam);
+//                }else{
+//                    showErrorMsg(data.msg);
+//                }
+                var market = data.attributes.market;
+                var marketDetailList = data.attributes.marketDetailList;
+                //修改标题
+                $("#viewDetailModal .modal-title").html("销售编号：" +market.marketNo);
+                //销售主信息
+                $("#customerNameModal").html(market.customerName);
+                var newtime = new Date(market.marketDate);
+                $("#marketDateModal").html(formatDate(newtime,"yyyy-MM-dd HH:mm:ss"));
+                $("#priceModal").html(market.price + "(" + changeMoneyToChinese(market.price) + ")");
+                //销售详细信息
+                var tableContent = "";
+                $.each(marketDetailList,function(index,marketDetail){
+                    tableContent += '<tr>';
+                    var productType = "productId" + marketDetail.product.productType;
+                    tableContent += '<td>'+ productCodeMap[''+ productType +''] +'</td>';
+                    tableContent += '<td>'+ marketDetail.product.productNo +'</td>';
+                    tableContent += '<td>'+ marketDetail.singlePrice +'</td>';
+                    tableContent += '<td>'+ marketDetail.quantity +'</td>';
+                    tableContent += '<td>'+ marketDetail.totalPrice +'</td>';
+                    tableContent += '</tr>';
+                });
+                $("#marketDetailTable tbody").html(tableContent);
+            }
+        });
+        $("#viewDetailModal").modal("show");
     }
 </script>
 <body>
@@ -159,6 +211,51 @@
         </div>
     </div>
 
+</div>
+<div class="modal fade" id="viewDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">销售详细</h4>
+            </div>
+            <div class="modal-body">
+                <table id="marketMainTable" class="table table-bordered">
+                    <caption>销售信息</caption>
+                    <tbody>
+                        <tr>
+                            <td>客户名称</td>
+                            <td id="customerNameModal"></td>
+                            <td>销售日期</td>
+                            <td id="marketDateModal"></td>
+                        </tr>
+                        <tr>
+                            <td>金额</td>
+                            <td id="priceModal" colspan="3"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table id="marketDetailTable" class="table table-bordered">
+                    <caption>销售详细信息</caption>
+                    <thead>
+                    <tr>
+                        <th>商品类型</th>
+                        <th>商品编号</th>
+                        <th>单价</th>
+                        <th>数量</th>
+                        <th>总价</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
 </div>
 <!--退出确认模态框-->
 <form th:action="@{/logout}" method="post" id="logoutform" style="display: none;">

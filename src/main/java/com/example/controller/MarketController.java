@@ -20,10 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by zqLuo
@@ -162,4 +159,20 @@ public class MarketController extends BaseController {
         return ajaxJson;
     }
 
+    /**
+     * 销售订单详细
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "viewMarket")
+    public AjaxJson viewMarket(String marketId){
+        AjaxJson ajaxJson = new AjaxJson();
+        Market market = marketService.getMarketById(marketId);
+        List<MarketDetail> marketDetailList = marketService.getMarketDetailListByMarketId(marketId);
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("market",market);
+        map.put("marketDetailList",marketDetailList == null ? new ArrayList<MarketDetail>() : marketDetailList);
+        ajaxJson.setAttributes(map);
+        return ajaxJson;
+    }
 }

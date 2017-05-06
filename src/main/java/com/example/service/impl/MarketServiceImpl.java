@@ -11,6 +11,7 @@ import com.example.util.PageReturn;
 import com.example.util.StringUtil;
 import com.example.vo.MarketQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,8 @@ public class MarketServiceImpl implements MarketService {
     private JdbcUtil<Market> jdbcUtil;
     @Autowired
     private MarketDetailRepository marketDetailRepository;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public PageReturn getMarketList(MarketQueryVo marketQueryVo,int page, int size) {
@@ -97,6 +100,12 @@ public class MarketServiceImpl implements MarketService {
     @Override
     @Transactional(readOnly = false,rollbackFor = Exception.class)
     public void saveOrUpdateMarketDeatil(MarketDetail marketDetail) {
+        marketDetail.setTotalPrice(marketDetail.getSinglePrice() * marketDetail.getQuantity());
         marketDetailRepository.save(marketDetail);
+        //更新订单总金额
+        Double totapPrict = marketDetailRepository.getMarketTotalPriceByMarketId(marketDetail.getMarket().getId());
+        Market market = marketRepository.findOne(marketDetail.getMarket().getId());
+        market.setPrice(totapPrict);
+        marketRepository.save(market);
     }
 }

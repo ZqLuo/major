@@ -138,4 +138,8 @@ public class JdbcUtil<T> {
     public List queryForList(String sql,Class clazz,Object...params){
         return jdbcTemplate.queryForList(sql,clazz,params);
     }
+
+    public int execute(String sql,Object...params){
+        return jdbcTemplate.update(sql,params);
+    }
 }

@@ -27,4 +27,7 @@ public interface MarketDetailRepository extends JpaRepository<MarketDetail,Integ
     @Modifying
     @Query("delete from MarketDetail m where m.id = ?1")
     void delMarketDeatil(int id);
+
+    @Query("select sum(m.totalPrice) from MarketDetail m where m.market.id = ?1")
+    Double getMarketTotalPriceByMarketId(Integer id);
 }
