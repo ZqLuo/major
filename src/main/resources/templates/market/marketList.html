@@ -122,7 +122,12 @@
                 $("#customerNameModal").html(market.customerName);
                 var newtime = new Date(market.marketDate);
                 $("#marketDateModal").html(formatDate(newtime,"yyyy-MM-dd HH:mm:ss"));
-                $("#priceModal").html(market.price + "(" + changeMoneyToChinese(market.price) + ")");
+                if(market.price == null || market.price == 0){
+                    $("#priceModal").html("0.0");
+                }else {
+                    $("#priceModal").html(market.price + "(" + changeMoneyToChinese(market.price) + ")");
+                }
+                $("#remarkModal").html(market.remark);
                 //销售详细信息
                 var tableContent = "";
                 $.each(marketDetailList,function(index,marketDetail){
@@ -232,6 +237,10 @@
                         <tr>
                             <td>金额</td>
                             <td id="priceModal" colspan="3"></td>
+                        </tr>
+                        <tr>
+                            <td>备注信息</td>
+                            <td id="remarkModal" colspan="3"></td>
                         </tr>
                     </tbody>
                 </table>

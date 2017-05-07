@@ -80,6 +80,7 @@ public class MarketServiceImpl implements MarketService {
         if(StringUtil.isNotEmpty(market.getMarketDateStr())){
             market.setMarketDate(DateUtils.parse(market.getMarketDateStr(),DateUtils.datetimeFormat));
         }else{
+            market.setPrice(0.0);
             market.setMarketDate(new Date());
         }
         marketRepository.save(market);
@@ -94,7 +95,11 @@ public class MarketServiceImpl implements MarketService {
     @Override
     @Transactional(readOnly = false,rollbackFor = Exception.class)
     public void delMarketDeatil(String id) {
+        MarketDetail marketDetail = marketDetailRepository.findOne(Integer.parseInt(id));
+        Integer marketDetailId = marketDetail.getMarket().getId();
         marketDetailRepository.delMarketDeatil(Integer.parseInt(id));
+        //更新订单总金额
+        updateMarketPrice(marketDetailId);
     }
 
     @Override
@@ -103,8 +108,19 @@ public class MarketServiceImpl implements MarketService {
         marketDetail.setTotalPrice(marketDetail.getSinglePrice() * marketDetail.getQuantity());
         marketDetailRepository.save(marketDetail);
         //更新订单总金额
-        Double totapPrict = marketDetailRepository.getMarketTotalPriceByMarketId(marketDetail.getMarket().getId());
-        Market market = marketRepository.findOne(marketDetail.getMarket().getId());
+        updateMarketPrice(marketDetail.getMarket().getId());
+    }
+
+    /**
+     * 更新订单总金额
+     * @param marketId
+     */
+    public void updateMarketPrice(Integer marketId){
+        Double totapPrict = marketDetailRepository.getMarketTotalPriceByMarketId(marketId);
+        if(totapPrict == null){
+            totapPrict = 0.0;
+        }
+        Market market = marketRepository.findOne(marketId);
         market.setPrice(totapPrict);
         marketRepository.save(market);
     }
