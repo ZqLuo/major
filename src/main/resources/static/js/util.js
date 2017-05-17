@@ -1,3 +1,19 @@
+$.ajaxSetup({
+    timeout: 60000
+    //dataType: 'html',
+    ////请求成功后触发
+    //success: function (data) { show.append('success invoke!' + data + '<br/>'); },
+    ////请求失败遇到异常触发
+    //error: function (xhr, status, e) { show.append('error invoke! status:' + status+'<br/>'); },
+    ////完成请求后触发。即在success或error触发后触发
+    //complete: function (xhr, status) { show.append('complete invoke! status:' + status+'<br/>'); },
+    ////发送请求前触发
+    //beforeSend: function (xhr) {
+    //    //可以设置自定义标头
+    //    xhr.setRequestHeader('Content-Type', 'application/xml;charset=utf-8');
+    //    show.append('beforeSend invoke!' +'<br/>');
+    //},
+})
 var token = $('meta[name="_csrf"]').attr("content");
 var header = $('meta[name="_csrf_hader"]').attr("content");
 $(document).ajaxSend(function(e,xhr,opt){
