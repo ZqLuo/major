@@ -45,8 +45,8 @@ public class MarketServiceImpl implements MarketService {
             params.add(marketQueryVo.getProductType());
         }
         if(StringUtil.isNotEmpty(marketQueryVo.getProductNo())){
-            sql.append(" and m.id in (select md.market_id from market_detail md,product p where p.id = md.product_id and p.product_no = ?) ");
-            params.add(marketQueryVo.getProductNo());
+            sql.append(" and m.id in (select md.market_id from market_detail md,product p where p.id = md.product_id and p.product_no like ?) ");
+            params.add("%" + marketQueryVo.getProductNo() + "%");
         }
         if(StringUtil.isNotEmpty(marketQueryVo.getMarketDateBegin())){
             sql.append(" and market_date >= str_to_date(?,'%Y-%m-%d %H:%i:%s')");

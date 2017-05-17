@@ -35,6 +35,6 @@ public class MD5Util {
     }
 
     public static void main(String[] args) {
-        System.out.println(MD5Util.encode("111111"));
+        System.out.println(MD5Util.encode("qq1234"));
     }
 }

@@ -8,7 +8,7 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
     <link rel="icon" type="image/x-icon" href="/image/favicon.ico"/>
-    <title>斤斤屋谜</title>
+    <title>库存管理</title>
     <!--<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}"/>-->
     <!--<script th:src="@{/jquery/jquery-3.0.0.min.js}" ></script>-->
     <!--<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>-->
@@ -145,6 +145,11 @@
         });
         $("#viewDetailModal").modal("show");
     }
+    function printMarket(){
+        var printHtml = $("#viewDetailModal").html();
+        alert(printHtml);
+        window.print();
+    }
 </script>
 <body>
 <!--导航栏-->
@@ -262,6 +267,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <!--<button type="button" onclick="printMarket();" class="btn btn-primary">打印</button>-->
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->

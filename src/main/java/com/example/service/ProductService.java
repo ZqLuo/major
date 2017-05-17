@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.entity.Product;
+import com.example.entity.ProductHistory;
 import com.example.util.PageReturn;
 import com.example.vo.ProductQueryVo;
 
@@ -54,4 +55,42 @@ public interface ProductService {
      * @return
      */
     List<Map<String,Object>> getProductNoByProductype(String productType);
+
+    /**
+     * 获取商品历史纪录
+     * @param productId
+     * @return
+     */
+    PageReturn getProductHistoryList(String productId,int page,int size);
+
+    /**
+     * 保存或更新进货历史
+     * @param productHistory
+     */
+    ProductHistory saveOrUpdateProductHistory(ProductHistory productHistory) throws Exception;
+
+    /**
+     * 获取商品历史
+     * @param id
+     * @return
+     */
+    ProductHistory getProductHistoryById(String id);
+
+    /**
+     * 更新商品进货总数和总金额
+     * @param productId
+     */
+    void updateProductPriceAndQuantity(Integer productId);
+
+    /**
+     * 删除进货历史
+     * @param id
+     */
+    void removeProductHistory(String id);
+
+    /**
+     * 更新商品库存
+     * @param id
+     */
+    void updateProductResidueQuantity(String id);
 }

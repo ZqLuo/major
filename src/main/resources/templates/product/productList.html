@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
-    <link rel="icon" type="image/x-icon" href="/image/favicon.ico"/>
-    <title>斤斤屋谜</title>
+    <title>库存管理</title>
     <!--<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}"/>-->
     <!--<script th:src="@{/jquery/jquery-3.0.0.min.js}" ></script>-->
     <!--<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>-->
@@ -38,6 +37,10 @@
             {
                 showContent : '<span class="label label-danger">删除</span>',
                 functionName : "del"
+            },
+            {
+                showContent : '<span class="label label-info">进货历史</span>',
+                functionName : "inHistory"
             }
         ]
 //
@@ -87,6 +90,9 @@
             }
         });
         $("#mydialog").modal("hide");
+    }
+    function inHistory(id){
+        window.location.href = "/productController/goProductHistoryList?productId=" + id;
     }
 </script>
 <body>
@@ -141,10 +147,12 @@
                     <th field="id" style="display: none">编号</th>
                     <th field="productNo">商品编号</th>
                     <th field="productTypeName">商品类型</th>
-                    <th field="quantity">数量</th>
+                    <th field="quantity">库存</th>
                     <th field="measurementUnitName">单位</th>
-                    <th field="price">价格</th>
-                    <th field="purchaseDate" datatype="date">进货日期</th>
+                    <th field="price">平均进价</th>
+                    <th field="totalQuantity">总数</th>
+                    <th field="totalPrice">总价</th>
+                    <th field="purchaseDate" datatype="date">最近进货日期</th>
                     <th field="opt">操作</th>
                 </tr>
                 </thead>

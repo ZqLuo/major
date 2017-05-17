@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
+    <title>库存管理</title>
+    <!--<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}"/>-->
+    <!--<script th:src="@{/jquery/jquery-3.0.0.min.js}" ></script>-->
+    <!--<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>-->
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap-datetimepicker.min.css}"/>
+    <script th:src="@{/jquery/jquery.twbsPagination.min.js}"></script>
+    <script th:src="@{/js/tooltips/iziToast.min.js}" type="text/javascript"></script>
+    <link rel="stylesheet" th:href="@{/css/tooltips/iziToast.css}"/>
+    <script th:src="@{/bootstrap/js/bootstrap-datetimepicker.min.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap-datetimepicker.zh-CN.js}"></script>
+</head>
+<script>
+    var initParam;
+    $(function(){
+        var productId = $("#productId").val();
+        initParam = {
+            "tableid" : "showListTable", //表格字段
+            "url" : "/productController/productHistoryList?productId=" + productId ,
+            "optstr" : "数据操作字段",
+            "searchid" : "searchDiv",
+            "pageidc" : "pagination-c",
+            "pageidp" : "pagination-p",
+            "opt" : [
+                {
+                    showContent : '<span class="label label-success">修改</span>',
+                    functionName : "add"
+                },
+                {
+                    showContent : '<span class="label label-danger">删除</span>',
+                    functionName : "del"
+                }
+            ]
+        }
+        initList(initParam);
+        $('.form_date').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0
+        });
+        //监听文本框改变
+        $('#price,#quantity').on('input propertychange', function() {
+            showTotalPrice();
+        });
+        $('#productHistoryModal').on('hide.bs.modal', function () {
+            //关闭，清空对话框中的校验结果提示
+            $.each($('#productHistoryForm input'), function(i, v){
+                $("#"+v.id).parent().parent("div").removeClass("has-error");
+                $("#"+v.id).parent().parent("div").removeClass("has-success");
+            });
+        });
+    });
+    function search(){
+        initList(initParam);
+    }
+    function add(id){
+        $.each($('#productHistoryForm input'), function(i, v){
+            $("#"+v.id).parent().parent("div").removeClass("has-error");
+            $("#"+v.id).parent().parent("div").removeClass("has-success");
+            $("#"+v.id).val("");
+        });
+        if(id){
+            $.ajax({
+                url:'/productController/getProductHistory',
+                type:'POST',
+                data : {id:id},
+                async : false,
+                success:function (data) {
+                    $("#id").val(data.id);
+                    $("#price").val(data.price);
+                    $("#quantity").val(data.quantity);
+                    $("#totalPrice").val(data.totalPrice);
+                    var inDate = formatDate(new Date(data.inDate),"yyyy-MM-dd");
+                    $("#inDateValue").val(inDate);
+                    $("#remark").val(data.remark);
+                }
+            });
+            $("#productHistoryForm #id").val(id);
+        }else{
+            $("#remark").val("");
+            $("#productHistoryForm #id").val("")
+        }
+        $("#productHistoryModal").modal("show");
+    }
+    function del(id){
+//        alert(id);
+        showConfirmDialog("是否删除","","delCallback(" + id + ")","mydialog");
+    }
+    function delCallback(id){
+        $.ajax({
+            url:"/productController/delProductHistory",
+            type:'POST',
+            data : {id:id,productId:$("#productId").val()},
+            async : false,
+            success:function (data) {
+                var success = data.success;
+                if(success){
+                    showSuccessMsg("删除成功");
+                    initList(initParam);
+                }else{
+                    showErrorMsg(data.msg);
+                }
+            }
+        });
+        $("#mydialog").modal("hide");
+    }
+    function inHistory(id){
+        window.location.href = "/productController/editProductPage?id=" + id;
+    }
+    function showTotalPrice(){
+        /*<![CDATA[*/
+        var quantity = $("#quantity").val(); //数量
+        var singlePrice = $("#price").val(); //单价
+        if(quantity != '' && singlePrice != ''){
+            $("#totalPrice").val(quantity * singlePrice);
+        }else{
+            $("#totalPrice").val("");
+        }
+        /*]]>*/
+    }
+    function save(){
+        //空值校验
+        if(validIsEmpty('productHistoryModal')){
+            var productHistory = {};
+            $.each($("#productHistoryModal input"), function(i, v){
+                var value = v.value;
+                if(value) {
+                    productHistory[v.id] = value ;
+                };
+            });
+            productHistory['product.id'] = $("#productId").val();
+            $.ajax({
+                url:'/productController/editProductHistory',
+                type:'POST',
+                data : productHistory,
+                async : false,
+                success:function (data) {
+                    var success = data.success;
+                    if(success){
+//                        var id = data.obj.id;
+//                        var tableContent = getTableRowContent(data.obj);
+//                        if($("#marketDetailId" + id).html() == undefined){
+//                            tableContent = '<tr id="marketDetailId'+ id +'">' + tableContent + '</tr>';
+//                            $("#marketDetailTable tbody").append(tableContent);
+//                        }else{
+//                            $("#marketDetailId" + id).html(tableContent);
+//                        }
+                        $("#productHistoryModal").modal("hide");
+                        showSuccessMsg(data.msg);
+                        initList(initParam);
+                        //window.setTimeout(goPrePage,3000);
+                    }else{
+                        $("#productHistoryModal").modal("hide");
+                        showErrorMsg(data.msg);
+                    }
+                }
+            });
+        }
+    }
+</script>
+<body>
+<!--导航栏-->
+<ol class="breadcrumb">
+    <li><a th:href="${preMenuUrl}">库存管理</a></li>
+    <li class="active">进货纪录</li>
+</ol>
+<input type="hidden" th:value="${product.id}" id="productId"/>
+<div class="container" id="indexContainer">
+    <!--<div class="panel panel-default">-->
+        <!--<div class="panel-body">-->
+
+            <!--<div class="row" style="margin-top: 5px;">-->
+                <!--<div class="col-md-6 col-sm-6 col-xs-12 form-inline">-->
+                    <!--<button type="button" onclick="search();" class="btn btn-primary">查询</button>-->
+                    <!---->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="row">
+        <div class="table-responsive">
+            <table id="showListTable" class="table table-hover">
+                <caption>进货历史纪录 &nbsp;<button type="button" data-toggle="modal" onclick="add('');" class="btn btn-success">新增</button></caption>
+                <thead>
+                <tr>
+                    <th field="id" style="display: none">编号</th>
+                    <th field="price">单价</th>
+                    <th field="quantity">数量</th>
+                    <th field="totalPrice">总价</th>
+                    <th field="inDate" datatype="date">进货日期</th>
+                    <th field="opt">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="pagination-p" class="col-md-12 col-sm-12" style="margin-top: -35px;">
+            <ul id="pagination-c" class="pagination-md"></ul>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade" data-backdrop="static" id="productHistoryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <input type="hidden" id="marketDetailId"/>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">进货纪录编辑</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <form class="form-horizontal" role="form" id="productHistoryForm">
+                                <input type="hidden" id="id"/>
+                                <div class="form-group">
+                                    <label for="price" class="col-sm-3 control-label">单价</label>
+                                    <div class="col-sm-6">
+                                        <input type="number" class="form-control" id="price" placeholder="请输入单价"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="quantity" class="col-sm-3 control-label">数量</label>
+                                    <div class="col-sm-6">
+                                        <input type="number" class="form-control" id="quantity" placeholder="请输入数量"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="totalPrice" class="col-sm-3 control-label">总计</label>
+                                    <div class="col-sm-6">
+                                        <input allowEmpty="true" readonly="readonly" class="form-control" id="totalPrice" placeholder="总价"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="showDate" class="col-sm-3 control-label">进货日期</label>
+                                    <div class="col-sm-6">
+                                        <div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="inDate" data-link-format="yyyy-mm-dd">
+                                            <input allowEmpty="true" class="form-control" size="16" id="inDateValue" type="text" value="" readonly="readonly"/>
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                        </div>
+                                        <input type="hidden" id="showDate" value="" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="remark" class="col-sm-3 control-label">备注</label>
+                                    <div class="col-sm-6">
+                                        <textarea class="form-control" id="remark" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="save();" class="btn btn-primary">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<a style="display: none;" href="#" class="trigger-success">Success</a>
+<a style="display: none;" href="#" class="trigger-error">Error</a>
+<script th:src="@{/js/tooltips/iziToast.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/util.js}"></script>
+
+</body>
+</html>

@@ -4,6 +4,7 @@ import com.example.constant.AjaxJson;
 import com.example.constant.MenuTypeEnum;
 import com.example.constant.SysCodeEnum;
 import com.example.entity.Product;
+import com.example.entity.ProductHistory;
 import com.example.entity.SysCode;
 import com.example.entity.SysMenu;
 import com.example.service.ProductService;
@@ -12,6 +13,7 @@ import com.example.util.DateUtils;
 import com.example.util.PageReturn;
 import com.example.util.StringUtil;
 import com.example.vo.ProductQueryVo;
+import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -131,5 +133,61 @@ public class ProductController extends BaseController{
             }
         }
         return map;
+    }
+
+    @RequestMapping(value = "goProductHistoryList")
+    public String goProductHistoryList(String productId,Model model){
+        SysMenu sysMenu = sysMenuService.getSysMenuByType(MenuTypeEnum.PRODUCT_MENU.getMenyType());
+        model.addAttribute("preMenuUrl",sysMenu.getMenuUrl());
+        Product product = productService.getProductById(Integer.parseInt(productId));
+        model.addAttribute("product",product);
+        return "product/productHistoryList";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "productHistoryList")
+    public PageReturn productHistoryList(String productId){
+        PageReturn pageReturn = productService.getProductHistoryList(productId,getPage(),getSize());
+        return pageReturn;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "editProductHistory")
+    public AjaxJson editProductHistory(ProductHistory productHistory){
+        AjaxJson aj = new AjaxJson();
+        try {
+            productHistory = productService.saveOrUpdateProductHistory(productHistory);
+            productService.updateProductPriceAndQuantity(productHistory.getProduct().getId());
+            productService.updateProductResidueQuantity(productHistory.getProduct().getId()+"");
+        } catch (Exception e){
+            logger.error("保存进货历史失败",e);
+            aj.setSuccess(false);
+            aj.setMsg("保存失败");
+        }
+        return aj;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getProductHistory")
+    public ProductHistory getProductHistory(String id){
+        ProductHistory productHistory = productService.getProductHistoryById(id);
+        return productHistory;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "delProductHistory")
+    public AjaxJson delProductHistory(String id,String productId){
+        AjaxJson aj = new AjaxJson();
+        try {
+            productService.removeProductHistory(id);
+            productService.updateProductPriceAndQuantity(Integer.parseInt(productId));
+            productService.updateProductResidueQuantity(productId);
+        } catch (Exception e){
+            logger.error("删除进货历史失败",e);
+            aj.setSuccess(false);
+            aj.setMsg("删除失败");
+        }
+        return aj;
     }
 }

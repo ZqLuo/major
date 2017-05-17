@@ -45,7 +45,7 @@ function initMenu(menuDivId,menuType){
                 "<span class=\"icon-bar\"></span>"+
                 "<span class=\"icon-bar\"></span>"+
                 "</button>"+
-                "<a class=\"navbar-brand\" href=\"/\">斤斤屋谜</a>"+
+                "<a class=\"navbar-brand\" href=\"/\">库存管理系统</a>"+
                 "</div>"+
                 "<div class=\"collapse navbar-collapse\" id=\"example-navbar-collapse\">"+
                 "<ul class=\"nav navbar-nav\">";

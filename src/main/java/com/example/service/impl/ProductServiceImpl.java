@@ -1,7 +1,9 @@
 package com.example.service.impl;
 
+import com.example.dao.ProductHistoryRepository;
 import com.example.dao.ProductRepository;
 import com.example.entity.Product;
+import com.example.entity.ProductHistory;
 import com.example.service.ProductService;
 import com.example.util.DateUtils;
 import com.example.util.JdbcUtil;
@@ -25,6 +27,10 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     @Autowired
     private JdbcUtil<Product> jdbcUtil;
+    @Autowired
+    private JdbcUtil<ProductHistory> jdbcUtilHistory;
+    @Autowired
+    private ProductHistoryRepository productHistoryRepository;
 
 
     @Override
@@ -40,7 +46,9 @@ public class ProductServiceImpl implements ProductService {
                 "purchase_date purchaseDate," +
                 "quantity," +
                 "price," +
-                "remark " +
+                "remark," +
+                "total_quatity totalQuantity,"+
+                "total_price totalPrice "+
                 "from product p left join sys_code pt " +
                 "on (p.product_type = pt.code and pt.type = 'productType') " +
                 "left join sys_code mu " +
@@ -59,8 +67,8 @@ public class ProductServiceImpl implements ProductService {
                 params.add(productQuerty.getPurchaseDateEnd()+" 23:59:59");
             }
             if(StringUtil.isNotEmpty(productQuerty.getProductNo())){
-                sql.append(" and product_no = ? ");
-                params.add(productQuerty.getProductNo());
+                sql.append(" and product_no like ? ");
+                params.add("%" + productQuerty.getProductNo() + "%");
             }
         }
         sql.append(" order by purchase_date desc");
@@ -100,5 +108,49 @@ public class ProductServiceImpl implements ProductService {
     public List<Map<String,Object>> getProductNoByProductype(String productType) {
         String sql = "select product_no PRODUCTNO,id PRODUCTID  from product where product_type = ?";
         return jdbcUtil.queryForListMap(sql,productType);
+    }
+
+    @Override
+    public PageReturn getProductHistoryList(String productId,int page,int size) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("select id,in_date inDate,price, quantity,total_price totalPrice,remark from product_history where product_id = ? ");
+        List<Object> params = new ArrayList<Object>();
+        params.add(productId);
+        return jdbcUtilHistory.queryForPage(sql.toString(),page,size, ProductHistory.class,params.toArray());
+    }
+
+    @Override
+    @Transactional(readOnly = false,rollbackFor = Exception.class)
+    public ProductHistory saveOrUpdateProductHistory(ProductHistory productHistory) throws Exception {
+        if(StringUtil.isNotEmpty(productHistory.getInDateValue())){
+            productHistory.setInDate(DateUtils.parseDate(productHistory.getInDateValue(),"yyyy-MM-dd"));
+        }else {
+            productHistory.setInDate(new Date());
+        }
+        productHistoryRepository.save(productHistory);
+        return productHistory;
+    }
+
+    @Override
+    public ProductHistory getProductHistoryById(String id) {
+        return productHistoryRepository.findOne(Integer.parseInt(id));
+    }
+
+    @Override
+    @Transactional(readOnly = false,rollbackFor = Exception.class)
+    public void updateProductPriceAndQuantity(Integer productId){
+        productHistoryRepository.updateProductPriceAndQuantity(productId);
+    }
+
+    @Override
+    @Transactional(readOnly = false,rollbackFor = Exception.class)
+    public void removeProductHistory(String id) {
+        productHistoryRepository.delete(Integer.parseInt(id));
+    }
+
+    @Override
+    @Transactional(readOnly = false,rollbackFor = Exception.class)
+    public void updateProductResidueQuantity(String id) {
+        productRepository.updateProductResidueQuantity(Integer.parseInt(id));
     }
 }

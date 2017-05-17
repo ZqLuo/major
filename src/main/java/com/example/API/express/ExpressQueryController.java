@@ -33,12 +33,15 @@ public class ExpressQueryController extends BaseController{
         ExpressQuery expressQuery = expressQueryService.getExpressQueryByNo(nu);
         ShowapiExpInfo showapiExpInfo = null;
         if(expressQuery == null){
-            expressQuery = new ExpressQuery();
-            expressQuery.setExpressNo(nu);
             showapiExpInfo =  expressQueryUtil.showapiExpInfo(com,nu);
-            expressQuery.setResult(JSON.toJSON(showapiExpInfo).toString());
-            expressQuery.setLastQueryDate(new Date());
-            expressQueryService.saveOrUpdateExpressQuery(expressQuery);
+            if("0".equals(showapiExpInfo.getShowapi_res_code())){
+                //查询成功保存
+                expressQuery = new ExpressQuery();
+                expressQuery.setExpressNo(nu);
+                expressQuery.setResult(JSON.toJSON(showapiExpInfo).toString());
+                expressQuery.setLastQueryDate(new Date());
+                expressQueryService.saveOrUpdateExpressQuery(expressQuery);
+            }
         }else{
             Date last = expressQuery.getLastQueryDate();
             //距离上次查询时间超过15分钟

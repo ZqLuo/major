@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_hader" th:content="${_csrf.headerName}"/>
-    <link rel="icon" type="image/x-icon" href="/image/favicon.ico"/>
-    <title>斤斤屋谜</title>
+    <title>库存管理</title>
     <!--<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}"/>-->
     <!--<script th:src="@{/jquery/jquery-3.0.0.min.js}" ></script>-->
     <!--<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>-->
@@ -79,6 +78,8 @@
     <div class="row">
         <form class="form-horizontal" role="form" id="productForm">
             <input type="hidden" th:value="${product.id}" id="id"/>
+            <input type="hidden" th:value="${product.totalPrice}" id="totalPrice"/>
+            <input type="hidden" th:value="${product.totalQuantity}" id="totalQuantity"/>
             <div class="form-group">
                 <label for="productNo" class="col-sm-3 control-label">商品编号</label>
                 <div class="col-sm-6">

@@ -62,6 +62,18 @@ public class Product {
     @Column(name = "delete_tag",length = 1)
     private String deleteTag = "1";
 
+    /**
+     * 总价
+     */
+    @Column(name = "total_price")
+    private Double totalPrice;
+
+    /**
+     * 历史总量
+     */
+    @Column(name = "total_quatity")
+    private Double totalQuantity;
+
     public Integer getId() {
         return id;
     }
@@ -156,5 +168,21 @@ public class Product {
 
     public void setDeleteTag(String deleteTag) {
         this.deleteTag = deleteTag;
+    }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Double getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Double totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 }
