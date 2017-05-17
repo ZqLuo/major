@@ -48,6 +48,7 @@ public class ExpressQueryController extends BaseController{
             if(new Date().getTime() - last.getTime() >= (60*1000*15)){
                 showapiExpInfo =  expressQueryUtil.showapiExpInfo(com,nu);
                 expressQuery.setResult(JSON.toJSON(showapiExpInfo).toString());
+                expressQuery.setLastQueryDate(new Date());
                 expressQueryService.saveOrUpdateExpressQuery(expressQuery);
             }else{
                 showapiExpInfo =  JSON.parseObject(expressQuery.getResult(),ShowapiExpInfo.class);
