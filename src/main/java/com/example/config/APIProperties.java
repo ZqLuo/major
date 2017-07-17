@@ -24,6 +24,14 @@ public class APIProperties {
      * 数据库类型
      */
     public String dataBaseType;
+    /**
+     * 天气查询网址
+     */
+    private String weatherhost;
+    /**
+     * 天气查询appcode
+     */
+    public String weatherappcode;
 
     public String getShowapihost() {
         return showapihost;
@@ -47,5 +55,21 @@ public class APIProperties {
 
     public void setDataBaseType(String dataBaseType) {
         this.dataBaseType = dataBaseType;
+    }
+
+    public String getWeatherhost() {
+        return weatherhost;
+    }
+
+    public void setWeatherhost(String weatherhost) {
+        this.weatherhost = weatherhost;
+    }
+
+    public String getWeatherappcode() {
+        return weatherappcode;
+    }
+
+    public void setWeatherappcode(String weatherappcode) {
+        this.weatherappcode = weatherappcode;
     }
 }
