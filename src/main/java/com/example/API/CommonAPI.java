@@ -1,6 +1,6 @@
 package com.example.API;
 
-import com.example.util.AESUtil;
+import com.example.util.AESPasswordUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ public class CommonAPI {
         for(int i=0;i<b.length;i++){
             b[i] = (byte) Integer.parseInt(s[i]);
         }
-        return AESUtil.encryptPassword(password,new String(b));
+        return AESPasswordUtil.encryptPassword(password,new String(b));
     }
     /**
      * 加密
@@ -42,6 +42,6 @@ public class CommonAPI {
         for(int i=0;i<b.length;i++){
             b[i] = (byte) Integer.parseInt(s[i]);
         }
-        return AESUtil.decryptPassword(password,new String(b));
+        return AESPasswordUtil.decryptPassword(password,new String(b));
     }
 }
