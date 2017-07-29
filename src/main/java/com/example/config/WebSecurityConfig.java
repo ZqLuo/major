@@ -51,6 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/403").permitAll()
                 .antMatchers("/expressQuery/**").permitAll() //忽略快递查询请求
                 .antMatchers("/weather/**").permitAll() //忽略天气查询请求
+                .antMatchers("/common/**").permitAll() //通用工具
                 //忽略静态资源
                 .antMatchers("/angular/**").permitAll()
                 .antMatchers("/bootstrap/**").permitAll()

@@ -1876,4 +1876,11 @@ public class StringUtil {
 		}
 		return "";
 	}
+
+	public static String nvlString(Object object) {
+		if(object == null){
+			return "";
+		}
+		return object + "" ;
+	}
 }
