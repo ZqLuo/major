@@ -182,26 +182,4 @@ public class AESUtil {
         return null;
     }
 
-    public static void main(String[] args) throws UnsupportedEncodingException {
-//        String content = "123";
-//        String salt = "108,122,101,113,105,97,110,103";
-//        String[] s = salt.split(",");
-//        byte[] b = new byte[s.length];
-//        for(int i=0;i<b.length;i++){
-//            b[i] = (byte) Integer.parseInt(s[i]);
-//        }
-        String password = "123"; //密钥
-//        // 加密
-//        System.out.println("加密前：" + content);
-//        byte[] encode = encrypt(content, password);
-//
-//        //传输过程,不转成16进制的字符串，就等着程序崩溃掉吧
-//        String code = parseByte2HexStr(encode);
-//        System.out.println("密文字符串：" + code);
-        byte[] decode = parseHexStr2Byte("73BD5533609B5F4B307EC0A36E23E5940648CABBC31F684D28652D68BA16C7815FE4EDC97762431CED02A7153D24D78A");
-        // 解密
-        byte[] decryptResult = decrypt(decode, "lzeqiang");
-        System.out.println("解密后：" + new String(decryptResult, "UTF-8")); //不转码会乱码
-
-    }
 }
