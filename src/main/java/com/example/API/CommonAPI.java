@@ -22,12 +22,12 @@ public class CommonAPI {
      */
     @GetMapping("/encrypt/{password}/{salt}")
     public String encrypt(@PathVariable String password,@PathVariable String salt){
-        String[] s = salt.split(",");
-        byte[] b = new byte[s.length];
-        for(int i=0;i<b.length;i++){
-            b[i] = (byte) Integer.parseInt(s[i]);
-        }
-        return AESPasswordUtil.encryptPassword(password,new String(b));
+//        String[] s = salt.split(",");
+//        byte[] b = new byte[s.length];
+//        for(int i=0;i<b.length;i++){
+//            b[i] = (byte) Integer.parseInt(s[i]);
+//        }
+        return AESPasswordUtil.encryptPassword(password,salt);
     }
     /**
      * 加密
@@ -37,11 +37,11 @@ public class CommonAPI {
      */
     @GetMapping("/decrypt/{password}/{salt}")
     public String decrypt(@PathVariable String password,@PathVariable  String salt){
-        String[] s = salt.split(",");
-        byte[] b = new byte[s.length];
-        for(int i=0;i<b.length;i++){
-            b[i] = (byte) Integer.parseInt(s[i]);
-        }
-        return AESPasswordUtil.decryptPassword(password,new String(b));
+//        String[] s = salt.split(",");
+//        byte[] b = new byte[s.length];
+//        for(int i=0;i<b.length;i++){
+//            b[i] = (byte) Integer.parseInt(s[i]);
+//        }
+        return AESPasswordUtil.decryptPassword(password,salt);
     }
 }
