@@ -23,6 +23,7 @@
 </head>
 <script>
     var productCodeMap = {};
+    var currentMarketId;
     var initParam = {
         "tableid" : "showListTable", //表格字段
         "url" : "/marketController/marketList",
@@ -42,6 +43,10 @@
             {
                 showContent : '<span class="label label-info">详细</span>',
                 functionName : "view"
+            },
+            {
+                showContent : '<span class="label label-info">文件</span>',
+                functionName : "viewFile"
             }
         ]
 //
@@ -149,6 +154,58 @@
         alert(printHtml);
         window.print();
     }
+    //查看销售文件
+    function viewFile(id){
+        $.ajax({
+            url:"/marketController/viewMarketFile",
+            type:'POST',
+            data : {marketId:id},
+            async : false,
+            success:function (data) {
+                var fileList = data.obj;
+                var listHtml = "";
+                if(fileList.length > 0){
+                    $(fileList).each(function(i,e){
+                        listHtml += '<tr><td>' + e.fileName + '</td><td>' + e.id + '</td></tr>'
+                    });
+                }
+                currentMarketId = id;
+                $('#viewMarketFileTable tbody').html(listHtml);
+                $("#viewMarketFileModal").modal("show");
+            }
+        });
+    }
+    //上传文件
+    function upload(){
+        var formData = new FormData();
+        var file = document.getElementById("file").files[0];
+        if(file == undefined || file == ''){
+            alert("请选择文件");
+            return;
+        }
+        formData.append("file", file);
+        formData.append("marketId", currentMarketId);
+        $.ajax({
+            url: '/marketController/uploadMarketFile',
+            type: "POST",
+            data: formData,
+            /**
+             *必须false才会自动加上正确的Content-Type
+             */
+            contentType: false,
+            /**
+             * 必须false才会避开jQuery对 formdata 的默认处理
+             * XMLHttpRequest会对 formdata 进行正确的处理
+             */
+            processData: false,
+            success: function (msg) {
+                alert(msg);
+            },
+            error: function () {
+                alert("上传失败！");
+            }
+        });
+    }
 </script>
 <body>
 <!--导航栏-->
@@ -221,6 +278,7 @@
     </div>
 
 </div>
+<!-- 销售详细模态框 -->
 <div class="modal fade" id="viewDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -265,6 +323,49 @@
                 </table>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <!--<button type="button" onclick="printMarket();" class="btn btn-primary">打印</button>-->
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!-- 销售文件模态框 -->
+<div class="modal fade" id="viewMarketFileModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">销售文件</h4>
+            </div>
+            <div class="modal-body">
+                <table id="viewMarketFileTable" class="table table-bordered">
+                    <caption>已上传文件</caption>
+                    <thead>
+                    <tr>
+                        <td>文件名称</td>
+                        <td style="width: 20%;">操作</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <table class="table table-bordered">
+                    <caption>上传文件</caption>
+                    <thead>
+                    <tr>
+                        <td>文件路径</td>
+                        <td>
+                            <form enctype="multipart/form-data">
+                                <input type="file" name="file" id="file"/>
+                            </form>
+                        </td>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="upload();" class="btn btn-primary">上传文件</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <!--<button type="button" onclick="printMarket();" class="btn btn-primary">打印</button>-->
             </div>

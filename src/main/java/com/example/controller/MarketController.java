@@ -3,10 +3,8 @@ package com.example.controller;
 import com.example.constant.AjaxJson;
 import com.example.constant.MenuTypeEnum;
 import com.example.constant.SysCodeEnum;
-import com.example.entity.Market;
-import com.example.entity.MarketDetail;
-import com.example.entity.SysCode;
-import com.example.entity.SysMenu;
+import com.example.entity.*;
+import com.example.service.MarketFileService;
 import com.example.service.MarketService;
 import com.example.service.SysMenuService;
 import com.example.util.DateUtils;
@@ -18,8 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -35,6 +37,8 @@ public class MarketController extends BaseController {
     private MarketService marketService;
     @Autowired
     private SysMenuService sysMenuService;
+    @Autowired
+    private MarketFileService marketFileService;
 
     @RequestMapping("marketListPage")
     public String marketListPage(Model model){
@@ -173,6 +177,39 @@ public class MarketController extends BaseController {
         map.put("market",market);
         map.put("marketDetailList",marketDetailList == null ? new ArrayList<MarketDetail>() : marketDetailList);
         ajaxJson.setAttributes(map);
+        return ajaxJson;
+    }
+
+    /**
+     * 销售订单文件
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "viewMarketFile")
+    public AjaxJson viewMarketFile(String marketId){
+        AjaxJson ajaxJson = new AjaxJson();
+        List<MarketFile> marketFiles = marketFileService.getMarketFilesByMarketId(marketId);
+        ajaxJson.setObj(marketFiles);
+        return ajaxJson;
+    }
+
+    /**
+     * 上传文件
+     * @param file
+     * @param marketId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "uploadMarketFile")
+    public AjaxJson uploadMarketFile(@RequestParam(value = "file", required = false) MultipartFile file,String marketId) {
+        AjaxJson ajaxJson = new AjaxJson();
+        try {
+            MarketFile marketFile = marketFileService.uploadMarketFile(file,marketId);
+        } catch (IOException e) {
+            logger.error("上传销售文件失败",e);
+            ajaxJson.setSuccess(false);
+            ajaxJson.setMsg("文件IO异常");
+        }
         return ajaxJson;
     }
 }
