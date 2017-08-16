@@ -35,7 +35,7 @@ public class MarketFileServiceImpl implements MarketFileService {
     @Transactional(readOnly = false,rollbackFor = Exception.class)
     public MarketFile uploadMarketFile(MultipartFile file, String marketId) throws IOException {
         //保存文件
-        String path = systemProperties.getFileRootPath();
+        String path = systemProperties.getFileRootPath() + File.separator + "marketFile";
         File fileDir = new File(path);
         if(!fileDir.exists()){
             fileDir.mkdirs();
@@ -59,4 +59,24 @@ public class MarketFileServiceImpl implements MarketFileService {
         marketFileRepository.save(marketFile);
         return marketFile;
     }
+
+    @Override
+    public MarketFile getMarketFileById(String fileId) {
+        return marketFileRepository.findOne(Integer.parseInt(fileId));
+    }
+
+    @Override
+    @Transactional(readOnly = false,rollbackFor = Exception.class)
+    public void deleteMarketFileById(String fileId) {
+        MarketFile marketFile = marketFileRepository.findOne(Integer.parseInt(fileId));
+        if(marketFile != null){
+            File file = new File(marketFile.getFilePath());
+            if(file.exists()){
+                file.delete();
+            }
+            marketFileRepository.delete(marketFile.getId());
+        }
+    }
+
+
 }

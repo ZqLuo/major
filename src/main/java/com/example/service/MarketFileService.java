@@ -24,4 +24,17 @@ public interface MarketFileService {
      * @param marketId
      */
     MarketFile uploadMarketFile(MultipartFile file, String marketId) throws IOException;
+
+    /**
+     * 根据文件ID下载文件
+     * @param fileId
+     * @return
+     */
+    MarketFile getMarketFileById(String fileId);
+
+    /**
+     * 根据文件ID删除文件
+     * @param fileId
+     */
+    void deleteMarketFileById(String fileId);
 }

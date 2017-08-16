@@ -11,6 +11,7 @@ import com.example.util.DateUtils;
 import com.example.util.PageReturn;
 import com.example.util.StringUtil;
 import com.example.vo.MarketQueryVo;
+import org.apache.http.HttpResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,8 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -205,11 +207,83 @@ public class MarketController extends BaseController {
         AjaxJson ajaxJson = new AjaxJson();
         try {
             MarketFile marketFile = marketFileService.uploadMarketFile(file,marketId);
+            ajaxJson.setObj(marketFile);
         } catch (IOException e) {
             logger.error("上传销售文件失败",e);
             ajaxJson.setSuccess(false);
             ajaxJson.setMsg("文件IO异常");
         }
+        return ajaxJson;
+    }
+
+    /**
+     * 下载销售文件
+     * @param fileId
+     */
+    @RequestMapping(value = "downLoadMarkerFile")
+    public void downLoadMarkerFile(String fileId, HttpServletResponse response){
+        FileInputStream fin = null;
+        InputStream in = null;
+        OutputStream os = null;
+        try {
+            MarketFile marketFile = marketFileService.getMarketFileById(fileId);
+            File file = new File(marketFile.getFilePath());
+           // response.setContentType("application/force-download");// 设置强制下载不打开
+//            String fileName = URLEncoder.encode(marketFile.getFileName(), "UTF-8");
+            String fileName = marketFile.getFileName();
+            // 清空response
+            response.reset();
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(fileName.getBytes("gbk"),"iso-8859-1") + "\"");
+            response.setContentType("application/octet-stream;charset=UTF-8");
+            if(file.exists()){
+                fin = new FileInputStream(file);
+                os = response.getOutputStream();
+                int count = 0;
+                byte[] buffer = new byte[1024 * 1024];
+                while ((count = fin.read(buffer)) != -1){
+                    os.write(buffer, 0, count);
+                }
+                os.flush();
+            }
+        } catch (Exception e){
+            logger.error("导出销售文件失败【" + fileId + "】",e);
+        } finally {
+            if(in != null){
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if(fin != null){
+                try {
+                    fin.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if(os != null){
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 删除销售文件
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "deleteMarketFile")
+    public AjaxJson deleteMarketFile(String fileId){
+        AjaxJson ajaxJson = new AjaxJson();
+        marketFileService.deleteMarketFileById(fileId);
         return ajaxJson;
     }
 }

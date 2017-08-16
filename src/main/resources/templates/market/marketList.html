@@ -166,7 +166,7 @@
                 var listHtml = "";
                 if(fileList.length > 0){
                     $(fileList).each(function(i,e){
-                        listHtml += '<tr><td>' + e.fileName + '</td><td>' + e.id + '</td></tr>'
+                        listHtml += '<tr><td>' + e.fileName + '</td><td><a onclick="downLoadFile('+ e.id +');">下载</a>&nbsp;<a onclick="deleteFile('+ e.id +')">删除</a></td></tr>';
                     });
                 }
                 currentMarketId = id;
@@ -199,10 +199,28 @@
              */
             processData: false,
             success: function (msg) {
-                alert(msg);
+                var marketFile = msg.obj;
+                alert("上传成功");
+//                $('#viewMarketFileTable tbody').append('<tr><td>' + e.fileName + '</td><td><a onclick="downLoadFile('+ e.id +');">下载</a>&nbsp;<a onclick="deleteFile('+ e.id +')">删除</a></td></tr>');
+                $("#viewMarketFileModal").modal("hide");
             },
             error: function () {
                 alert("上传失败！");
+            }
+        });
+    }
+    function downLoadFile(fileId){
+        window.location.href = '/marketController/downLoadMarkerFile?fileId=' + fileId;
+    }
+    function deleteFile(fileId){
+        $.ajax({
+            url: '/marketController/deleteMarketFile?fileId=' + fileId,
+            success: function (msg) {
+                alert("删除成功!");
+                $("#viewMarketFileModal").modal("hide");
+            },
+            error: function () {
+                alert("删除失败");
             }
         });
     }
